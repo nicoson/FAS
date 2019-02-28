@@ -1,0 +1,18 @@
+FROM reg.qiniu.com/avaprd/ava-eval-ataraxia-detect-bk-rfcn-dcn:20180711-v375-dev--201809111107-v363-dev
+
+RUN sed -i s/archive.ubuntu.com/mirrors.163.com/g /etc/apt/sources.list
+RUN sed -i s/security.ubuntu.com/mirrors.163.com/g /etc/apt/sources.list
+
+RUN pip install flask flask_cors 
+RUN apt-get update && apt-get install  -y --no-install-recommends ffmpeg && \
+    apt-get clean
+    
+# ENV GODEBUG cgocheck=0
+# ENV PATH=$PATH:/workspace/serving
+# ENV PYTHONPATH=/workspace/serving/python:$PYTHONPATH
+
+#server
+WORKDIR /workspace/serving
+LABEL com.qiniu.atlab.biz = "ava-eval-http-server"
+
+#CMD ["serving-eval","-f","serving-eval.conf"]

@@ -1,0 +1,293 @@
+section {
+    >div {
+        width: 100%;
+    }
+}
+
+#wa_list_filter_bar {
+    width: 100%;
+    padding: 0 0 2rem 0;
+    // display: flex;
+    // justify-content: space-between;
+    >div{
+        padding: 10px; 
+        &:nth-child(2), &:nth-child(3) {
+            display: flex;
+            align-items: center;
+
+            >div:first-child {
+                width: 100px;
+                flex-shrink: 0;
+            }
+
+            #wa_list_scene_option_container, #wa_list_object_option_container {
+                display:flex;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                >div {
+                    width: 200px;
+                    flex-shrink: 0;
+                }
+            }
+        }
+    }
+    input {
+        padding: .5rem;
+        margin: 0 1rem;
+        border-radius: 5px;
+        border: 1px solid #aaa;
+    }
+}
+
+#wa_list_result_num {
+    margin: 1rem;
+    color: #555;
+    font-size: .8rem;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table#wa_list_table {
+    width: 100%;
+
+    td,th {
+        width: 5%;
+        padding: .5rem;
+        border: 1px solid #00a7de56;
+        text-align: center;
+        word-wrap: break-word;
+
+        // &:hover {
+        //     cursor: pointer;
+        // }
+
+        img,video {
+            width: 10rem;
+            &:hover {
+                cursor: zoom-in;
+            }
+        }
+    }
+
+    tr {
+        color: #444;
+    }
+
+    td {
+        color: #666;
+        img.fas-list-table-icon {
+            width: 2rem;
+            margin-left: .5rem;
+            vertical-align: middle;
+        }
+    }
+
+    tr.wa-list-table-tr-main {
+        td {
+            background: #00a7de0f;
+
+            p {
+                width: 15rem;
+                margin: 0 auto;
+            }
+
+            &:nth-of-type(3):hover {
+                cursor: pointer;
+                outline: 3px solid red;
+                cursor: zoom-in;
+            }
+        }
+        
+        th {
+            background: #00a7de35;
+        }
+
+        &:hover {
+            cursor: pointer;
+            outline: 3px solid #00a7dea5;
+        }
+    }
+
+    .wa-list-table-extendpanel {
+
+        div {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            padding: 2rem;
+    
+            table {
+                width: 40%;
+
+                td {
+                    text-align: center;
+                }
+
+                th {
+                    background: #00a7de0f;
+                }
+            }
+        }
+    }
+}
+
+#wa_list_tab_menu {
+    label {
+        margin-right: 2px;
+    }
+}
+
+#wa_task_modal_apppanel {
+    #wa_task_apppanel_title {
+        text-align: center;
+        font-size: 2rem;
+        padding: 1rem 0;
+        border: none;
+        width: 100%;
+        color: #777;
+    }
+}
+
+#wa_task_detail_site_table {
+    margin-top: 2rem;
+    td {
+        // width: 10%;
+    }
+}
+
+.wa-task-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+}
+
+#wa_list_modal_detail_trace {
+    .wa-task-modal;
+    #tracemap {
+        background: rgba(255,255,255,0.8);
+    }
+}
+
+#wa_list_modal_report {
+    text-align: center;
+
+    .wa-task-modal;
+    .wa-list-model-container {
+        width: 50vw;
+        >p {
+            margin: 2rem;
+            font-size: 1.5rem;
+        }
+        button {
+            margin: 3rem;
+        }
+    }
+}
+
+#wa_list_modal_user_detail {
+    .wa-task-modal;
+    .wa-list-model-container {
+        overflow: auto;
+        >p {
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+    
+        >div {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+    
+            table {
+                margin: 2rem 0;
+            }
+    
+            table:nth-of-type(1) {
+                width: 35vw;
+            }
+        }
+    }
+}
+
+#wa_list_modal_addlist {
+    .wa-task-modal;
+    text-align: center;
+
+    #wa_list_applist {
+        background: rgba(255,255,255,0.8);
+        height: 80vh;
+        width: 80vw;
+        padding: 2rem;
+
+        >div {
+            height: 100%;
+            overflow: auto;
+            padding: 1rem;
+            border: 1px solid #aaa;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            overflow: auto;
+        }
+
+        #wa_list_modal_detail_map {
+            width: 70vw;
+            height: 40vh;
+        }
+
+        #wa_list_modal_detail_pie {
+            width: 30vw;
+            height: 30vh;
+        }
+    }
+    button {
+        margin: 2rem;
+    }
+}
+
+#wa_list_modal_detail_radar {
+    width: 35vw;
+    height: 40vh;
+}
+
+.wa-list-status-red {
+    height: 1.2rem;
+    background: rgb(185, 0, 0);
+}
+.wa-list-status-yellow {
+    height: 1.2rem;
+    background: yellow;
+}
+.wa-list-status-green {
+    height: 1.2rem;
+    background: rgb(10, 192, 10);
+}
+
+.js-wa-task-modal-back {
+    font-size: 1rem;
+    padding: 1rem;
+    &:before {
+        content: '\21E6';
+    }
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.wa-list-model-container {
+    background: rgba(255,255,255,0.8);
+    max-height: 80vh;
+    width: 80vw;
+    padding: 2rem;
+}

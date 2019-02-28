@@ -1,0 +1,87 @@
+section > div {
+  width: 100%;
+}
+section #wa_spider_createjob_panel {
+  margin-bottom: 2rem;
+}
+section #wa_spider_createjob_panel input,
+section #wa_spider_createjob_panel select {
+  -webkit-appearance: none;
+  padding: .5rem;
+  margin: 1rem;
+  border: 1px solid #aaa;
+}
+section #wa_spider_createjob_panel input {
+  width: 20rem;
+  border-radius: 5px;
+}
+section #wa_spider_createjob_panel select {
+  width: 8rem;
+}
+section #wa_spider_createjob_panel button:hover {
+  cursor: pointer;
+}
+section table {
+  border-collapse: collapse;
+  width: 100%;
+}
+section table td,
+section table th {
+  width: 5%;
+  padding: .5rem;
+  border: 1px solid #00a7de56;
+  text-align: center;
+  word-wrap: break-word;
+}
+section table td img,
+section table th img,
+section table td video,
+section table th video {
+  width: 5rem;
+}
+section table td img:hover,
+section table th img:hover,
+section table td video:hover,
+section table th video:hover {
+  cursor: zoom-in;
+}
+section table tr {
+  color: #444;
+}
+section table th {
+  background: #00a7de35;
+}
+section table td {
+  color: #666;
+}
+section table tr.wa-list-table-tr-main td {
+  background: #00a7de0f;
+}
+section table tr.wa-list-table-tr-main td p {
+  width: 15rem;
+  margin: 0 auto;
+}
+section table tr.wa-list-table-tr-main td:nth-of-type(3):hover {
+  cursor: pointer;
+  outline: 3px solid red;
+  cursor: zoom-in;
+}
+section table tr.wa-list-table-tr-main:hover {
+  cursor: pointer;
+  outline: 3px solid #00a7dea5;
+}
+section table .wa-list-table-extendpanel div {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  padding: 2rem;
+}
+section table .wa-list-table-extendpanel div table {
+  width: 40%;
+}
+section table .wa-list-table-extendpanel div table td {
+  text-align: center;
+}
+section table .wa-list-table-extendpanel div table th {
+  background: #00a7de0f;
+}

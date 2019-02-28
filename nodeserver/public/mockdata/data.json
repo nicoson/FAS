@@ -1,0 +1,267 @@
+{
+  "key": [
+    {
+      "id": "k0",
+      "standard_name": "商标",
+      "prob_names": [
+        "平安银行"
+      ],
+      "corase_position": {
+        "left": 0,
+        "right": 0.3,
+        "top": 0,
+        "bottom": 0.2
+      },
+      "h_or_v": 0,
+      "is_separable": 0,
+      "is_title": 0,
+      "weight": 1
+    },
+    {
+      "id": "k1",
+      "standard_name": "传票号",
+      "prob_names": [
+        "传票号"
+      ],
+      "corase_position": {
+        "left": 0.5,
+        "right": 1,
+        "top": 0,
+        "bottom": 0.2
+      },
+      "h_or_v": 0,
+      "is_separable": 0,
+      "is_title": 0,
+      "weight": 1
+    },
+    {
+      "id": "k2",
+      "standard_name": "业务流水号",
+      "prob_names": [
+        "业务流水号"
+      ],
+      "corase_position": {
+        "left": 0.5,
+        "right": 1,
+        "top": 0.1,
+        "bottom": 0.3
+      },
+      "h_or_v": 0,
+      "is_separable": 0,
+      "is_title": 0,
+      "weight": 1
+    },
+    {
+      "id": "k3",
+      "standard_name": "业务",
+      "prob_names": [
+        "申请业务"
+      ],
+      "corase_position": {
+        "left": 0,
+        "right": 0.3,
+        "top": 0.1,
+        "bottom": 0.3
+      },
+      "h_or_v": 0,
+      "is_separable": 0,
+      "is_title": 0,
+      "weight": 1
+    },
+    {
+      "id": "k4",
+      "standard_name": "公司名",
+      "prob_names": [
+        "平安银行股份有限公司"
+      ],
+      "corase_position": {
+        "left": 0.7,
+        "right": 1,
+        "top": 0.8,
+        "bottom": 1
+      },
+      "h_or_v": 0,
+      "is_separable": 0,
+      "is_title": 0,
+      "weight": 1
+    },
+    {
+      "id": "k5",
+      "standard_name": "网点",
+      "prob_names": [
+        "受理网点"
+      ],
+      "corase_position": {
+        "left": 0.1,
+        "right": 0.5,
+        "top": 0.5,
+        "bottom": 1
+      },
+      "h_or_v": 0,
+      "is_separable": 0,
+      "is_title": 0,
+      "weight": 1
+    },
+    {
+      "id": "k6",
+      "standard_name": "日期",
+      "prob_names": [
+        "日期"
+      ],
+      "corase_position": {
+        "left": 0,
+        "right": 0.2,
+        "top": 0.5,
+        "bottom": 1
+      },
+      "h_or_v": 0,
+      "is_separable": 0,
+      "is_title": 0,
+      "weight": 1
+    }
+  ],
+  "value": [
+    {
+      "id": "v0",
+      "standard_name": "传票号",
+      "type": {
+        "chn": 0,
+        "eng": 2,
+        "num": 1,
+        "cap_money": 0
+      },
+      "corase_position": {
+        "left": 0.5,
+        "right": 1,
+        "top": 0,
+        "bottom": 0.2
+      },
+      "h_or_v": 0,
+      "prob_length": {
+        "min": 32,
+        "max": 32
+      },
+      "words_contained": [
+        "****"
+      ],
+      "is_separable": 0,
+      "weight": 1
+    },
+    {
+      "id": "v1",
+      "standard_name": "业务流水号",
+      "type": {
+        "chn": 0,
+        "eng": 0,
+        "num": 1,
+        "cap_money": 0
+      },
+      "corase_position": {
+        "left": 0.5,
+        "right": 1,
+        "top": 0.1,
+        "bottom": 0.3
+      },
+      "h_or_v": 0,
+      "prob_length": {
+        "min": 22,
+        "max": 22
+      },
+      "words_contained": [],
+      "is_separable": 0,
+      "weight": 1
+    },
+    {
+      "id": "v2",
+      "standard_name": "申请业务",
+      "type": {
+        "chn": 1,
+        "eng": 0,
+        "num": 0,
+        "cap_money": 0
+      },
+      "corase_position": {
+        "left": 0.1,
+        "right": 0.5,
+        "top": 0.1,
+        "bottom": 0.3
+      },
+      "h_or_v": 0,
+      "prob_length": {
+        "min": -1,
+        "max": -1
+      },
+      "words_contained": [],
+      "is_separable": 0,
+      "weight": 1
+    }
+  ],
+  "binary_relations": {
+    "same_row": [
+      [
+        "k1",
+        "v0"
+      ],
+      [
+        "k3",
+        "v2",
+        "k2",
+        "v1"
+      ],
+      [
+        "k6",
+        "k5"
+      ]
+    ],
+    "same_col": [
+      [
+        "k1",
+        "k2"
+      ]
+    ],
+    "left_right": [
+      [
+        "k0",
+        "k1"
+      ],
+      [
+        "k1",
+        "v0"
+      ],
+      [
+        "k3",
+        "v2"
+      ],
+      [
+        "v2",
+        "k2"
+      ],
+      [
+        "k2",
+        "v1"
+      ],
+      [
+        "k6",
+        "k5"
+      ]
+    ],
+    "top_bottom": [
+      [
+        "k0",
+        "k3"
+      ],
+      [
+        "k1",
+        "k2"
+      ],
+      [
+        "k3",
+        "k6"
+      ],
+      [
+        "k6",
+        "k4"
+      ]
+    ]
+  }
+}

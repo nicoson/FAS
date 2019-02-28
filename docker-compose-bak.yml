@@ -1,0 +1,26 @@
+version: '2.3'
+
+services:
+    server:
+        restart: always
+        image: reg.qiniu.com/inference/terror-wangan-mix:20181206v2
+        runtime: nvidia
+        volumes:
+            - /root/nixiaohui/FAS/inference-file/eval.py:/workspace/serving/python/evals/eval.py
+            - /root/nixiaohui/FAS/inference-file/serving-eval:/workspace/serving/serving-eval
+            - /root/nixiaohui/FAS/inference-file/serving-eval.conf:/workspace/serving/serving-eval.conf
+            - /root/nixiaohui/FAS/models:/workspace/serving/models/online-model/used
+            - /root/nixiaohui/FAS/log:/workspace/serving/run/auditlog
+        devices:
+            # - /dev/nvidiactl
+            # - /dev/nvidia-uvm
+            - /dev/nvidia0
+        environment:
+            USE_DEVICE: GPU
+            RUN_MODE: standalone
+            INTEGRATE: lib
+        ports:
+            - 8000:8000
+        command: INTEGRATE=lib exec ./serving-eval -f serving-eval.conf
+        # networks:
+        #     - esp-bridge

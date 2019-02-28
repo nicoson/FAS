@@ -1,0 +1,114 @@
+section {
+    >div {
+        width: 100%;
+    }
+
+    #wa_spider_createjob_panel {
+        margin-bottom: 2rem;
+        
+        input, select {
+            -webkit-appearance: none;
+            padding: .5rem;
+            margin: 1rem;
+            border: 1px solid #aaa;
+        }
+
+        input {
+            width: 20rem;
+            border-radius: 5px;
+        }
+
+        select {
+            width: 8rem;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    
+        td,th {
+            width: 5%;
+            padding: .5rem;
+            border: 1px solid #00a7de56;
+            text-align: center;
+            word-wrap: break-word;
+    
+            // &:hover {
+            //     cursor: pointer;
+            // }
+    
+            img,video {
+                width: 5rem;
+                &:hover {
+                    cursor: zoom-in;
+                }
+            }
+        }
+    
+        tr {
+            color: #444;
+        }
+
+        th {
+            background: #00a7de35;
+        }
+    
+        td {
+            color: #666;
+        }
+    
+        tr.wa-list-table-tr-main {
+            td {
+                background: #00a7de0f;
+    
+                p {
+                    width: 15rem;
+                    margin: 0 auto;
+                }
+    
+                &:nth-of-type(3):hover {
+                    cursor: pointer;
+                    outline: 3px solid red;
+                    cursor: zoom-in;
+                }
+            }
+            
+            th {
+                
+            }
+    
+            &:hover {
+                cursor: pointer;
+                outline: 3px solid #00a7dea5;
+            }
+        }
+    
+        .wa-list-table-extendpanel {
+    
+            div {
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+                padding: 2rem;
+        
+                table {
+                    width: 40%;
+    
+                    td {
+                        text-align: center;
+                    }
+    
+                    th {
+                        background: #00a7de0f;
+                    }
+                }
+            }
+        }
+    }
+}
+

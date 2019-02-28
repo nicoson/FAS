@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>微博数据源配置</title>
+    <link rel="stylesheet" href="./stylesheet/common.css">
+    <link rel="stylesheet" href="./stylesheet/layout.css">
+    <link rel="stylesheet" href="./stylesheet/spider.css">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="/imgs/qiniulogo.png" alt="">
+            <p>七牛Atlab-现场分析系统</p>
+        </div>
+        <div id="navbar"></div>
+    </header>
+
+    <section>
+        <p>上海||警察||徐汇||法院||zf||政府||jc</p>
+        <div id="wa_spider_createjob_panel">
+            *关键词：<input type="text" id="wa_spider_createjob_panel_keywords" placeholder="请输入关键词（必填）" />
+            地点：<select name="" id="wa_spider_createjob_panel_select_city" onchange="selectorChange()">
+                    <option value="0">省／直辖市</option>
+                </select>
+                <select name="" id="wa_spider_createjob_panel_select_district">
+                    <option value="1000">城市／地区</option>、
+                </select>
+            <button class="btn-info" onclick="createJob()">创建任务</button>
+        </div>
+
+        <table id="wa_spider_table">
+            <tr>
+                <th>任务编号</th>
+                <th>关键词</th>
+                <th>地区</th>
+                <th>创建时间</th>
+                <th>运行时常</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+        </table>
+    </section>
+
+    <footer>
+        <p>@copy right reserved by Qiniu</p>
+    </footer>
+
+    <div class="wa-modal-loading component-hidden">
+        <img src="/imgs/loading.png" alt="">
+    </div>
+
+    <script src="./javascript/config.js"></script>
+    <script src="./javascript/spider.js"></script>
+</body>
+</html>

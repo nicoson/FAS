@@ -1,0 +1,9 @@
+node_modules/
+bower_components/
+dev/
+dist/
+package-lock.json
+/db/md5.json
+docker-compose.yml
+nginx.conf
+nodeserver/public/files

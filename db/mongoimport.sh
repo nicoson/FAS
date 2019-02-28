@@ -1,0 +1,1 @@
+mongoimport --db qiniu-esp --collection md5 --file ./md5.json

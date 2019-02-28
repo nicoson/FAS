@@ -1,0 +1,288 @@
+section > div {
+  width: 100%;
+}
+#wa_list_filter_bar {
+  width: 100%;
+  padding: 0 0 2rem 0;
+}
+#wa_list_filter_bar > div {
+  padding: 10px;
+}
+#wa_list_filter_bar > div:nth-child(2),
+#wa_list_filter_bar > div:nth-child(3) {
+  display: flex;
+  align-items: center;
+}
+#wa_list_filter_bar > div:nth-child(2) > div:first-child,
+#wa_list_filter_bar > div:nth-child(3) > div:first-child {
+  width: 100px;
+  flex-shrink: 0;
+}
+#wa_list_filter_bar > div:nth-child(2) #wa_list_scene_option_container,
+#wa_list_filter_bar > div:nth-child(3) #wa_list_scene_option_container,
+#wa_list_filter_bar > div:nth-child(2) #wa_list_object_option_container,
+#wa_list_filter_bar > div:nth-child(3) #wa_list_object_option_container {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+#wa_list_filter_bar > div:nth-child(2) #wa_list_scene_option_container > div,
+#wa_list_filter_bar > div:nth-child(3) #wa_list_scene_option_container > div,
+#wa_list_filter_bar > div:nth-child(2) #wa_list_object_option_container > div,
+#wa_list_filter_bar > div:nth-child(3) #wa_list_object_option_container > div {
+  width: 200px;
+  flex-shrink: 0;
+}
+#wa_list_filter_bar input {
+  padding: .5rem;
+  margin: 0 1rem;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+}
+#wa_list_result_num {
+  margin: 1rem;
+  color: #555;
+  font-size: .8rem;
+}
+table {
+  border-collapse: collapse;
+}
+table#wa_list_table {
+  width: 100%;
+}
+table#wa_list_table td,
+table#wa_list_table th {
+  width: 5%;
+  padding: .5rem;
+  border: 1px solid #00a7de56;
+  text-align: center;
+  word-wrap: break-word;
+}
+table#wa_list_table td img,
+table#wa_list_table th img,
+table#wa_list_table td video,
+table#wa_list_table th video {
+  width: 10rem;
+}
+table#wa_list_table td img:hover,
+table#wa_list_table th img:hover,
+table#wa_list_table td video:hover,
+table#wa_list_table th video:hover {
+  cursor: zoom-in;
+}
+table#wa_list_table tr {
+  color: #444;
+}
+table#wa_list_table td {
+  color: #666;
+}
+table#wa_list_table td img.fas-list-table-icon {
+  width: 2rem;
+  margin-left: .5rem;
+  vertical-align: middle;
+}
+table#wa_list_table tr.wa-list-table-tr-main td {
+  background: #00a7de0f;
+}
+table#wa_list_table tr.wa-list-table-tr-main td p {
+  width: 15rem;
+  margin: 0 auto;
+}
+table#wa_list_table tr.wa-list-table-tr-main td:nth-of-type(3):hover {
+  cursor: pointer;
+  outline: 3px solid red;
+  cursor: zoom-in;
+}
+table#wa_list_table tr.wa-list-table-tr-main th {
+  background: #00a7de35;
+}
+table#wa_list_table tr.wa-list-table-tr-main:hover {
+  cursor: pointer;
+  outline: 3px solid #00a7dea5;
+}
+table#wa_list_table .wa-list-table-extendpanel div {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  padding: 2rem;
+}
+table#wa_list_table .wa-list-table-extendpanel div table {
+  width: 40%;
+}
+table#wa_list_table .wa-list-table-extendpanel div table td {
+  text-align: center;
+}
+table#wa_list_table .wa-list-table-extendpanel div table th {
+  background: #00a7de0f;
+}
+#wa_list_tab_menu label {
+  margin-right: 2px;
+}
+#wa_task_modal_apppanel #wa_task_apppanel_title {
+  text-align: center;
+  font-size: 2rem;
+  padding: 1rem 0;
+  border: none;
+  width: 100%;
+  color: #777;
+}
+#wa_task_detail_site_table {
+  margin-top: 2rem;
+}
+.wa-task-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+#wa_list_modal_detail_trace {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+#wa_list_modal_detail_trace #tracemap {
+  background: rgba(255, 255, 255, 0.8);
+}
+#wa_list_modal_report {
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+#wa_list_modal_report .wa-list-model-container {
+  width: 50vw;
+}
+#wa_list_modal_report .wa-list-model-container > p {
+  margin: 2rem;
+  font-size: 1.5rem;
+}
+#wa_list_modal_report .wa-list-model-container button {
+  margin: 3rem;
+}
+#wa_list_modal_user_detail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+}
+#wa_list_modal_user_detail .wa-list-model-container {
+  overflow: auto;
+}
+#wa_list_modal_user_detail .wa-list-model-container > p {
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 2rem 0;
+}
+#wa_list_modal_user_detail .wa-list-model-container > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+#wa_list_modal_user_detail .wa-list-model-container > div table {
+  margin: 2rem 0;
+}
+#wa_list_modal_user_detail .wa-list-model-container > div table:nth-of-type(1) {
+  width: 35vw;
+}
+#wa_list_modal_addlist {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 999;
+  text-align: center;
+}
+#wa_list_modal_addlist #wa_list_applist {
+  background: rgba(255, 255, 255, 0.8);
+  height: 80vh;
+  width: 80vw;
+  padding: 2rem;
+}
+#wa_list_modal_addlist #wa_list_applist > div {
+  height: 100%;
+  padding: 1rem;
+  border: 1px solid #aaa;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow: auto;
+}
+#wa_list_modal_addlist #wa_list_applist #wa_list_modal_detail_map {
+  width: 70vw;
+  height: 40vh;
+}
+#wa_list_modal_addlist #wa_list_applist #wa_list_modal_detail_pie {
+  width: 30vw;
+  height: 30vh;
+}
+#wa_list_modal_addlist button {
+  margin: 2rem;
+}
+#wa_list_modal_detail_radar {
+  width: 35vw;
+  height: 40vh;
+}
+.wa-list-status-red {
+  height: 1.2rem;
+  background: #b90000;
+}
+.wa-list-status-yellow {
+  height: 1.2rem;
+  background: yellow;
+}
+.wa-list-status-green {
+  height: 1.2rem;
+  background: #0ac00a;
+}
+.js-wa-task-modal-back {
+  font-size: 1rem;
+  padding: 1rem;
+}
+.js-wa-task-modal-back:before {
+  content: '\21E6';
+}
+.js-wa-task-modal-back:hover {
+  cursor: pointer;
+}
+.wa-list-model-container {
+  background: rgba(255, 255, 255, 0.8);
+  max-height: 80vh;
+  width: 80vw;
+  padding: 2rem;
+}

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>七牛Atlab-现场分析系统</title>
+    <link rel="stylesheet" href="./stylesheet/common.css">
+    <link rel="stylesheet" href="./stylesheet/layout.css">
+    <link rel="stylesheet" href="./stylesheet/audit.css">
+    <link rel="stylesheet" href="./libs/css/fontawesome-all.min.css">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="/imgs/qiniulogo.png" alt="">
+            <p>七牛Atlab-现场分析系统</p>
+        </div>
+        <div id="navbar"></div>
+    </header>
+
+    <section>
+        <div>
+            <div id="wa_list_filter_bar">
+                <div>
+                    <div>
+                        每次获取<input id="wa_list_setting_size" type="number" value="30"/>条
+                    </div>
+                    <div>
+                        默认设置为：<input id="wa_list_setting_defaultclass_normal" name="defaultclass" type="radio" checked /><label for="wa_list_setting_defaultclass_normal">正常</label> 
+                        <input id="wa_list_setting_defaultclass_abnormal" name="defaultclass" type="radio" /><label for="wa_list_setting_defaultclass_abnormal">违规</label> 
+                    </div>
+                    <div>
+                        图像尺寸：
+                        <button class='btn-info' onclick="stretchImg()"><i class="fas fa-search-plus"></i></button>
+                        <button class='btn-info' onclick="shrinkImg()"><i class="fas fa-search-minus"></i></button>
+                    </div>
+                    <div>
+                        <button id="wa_list_setting_submit" class="btn-success" onclick="resetRuleSearch()">保存设置并搜索</button>
+                    </div>
+                </div>
+                <div class="noflex">
+                    &nbsp;&nbsp;&nbsp;资源类型：
+                    <label for="wa_list_table_filter_type_image"><input id="wa_list_table_filter_type_image" name="wa_list_table_filter_type" type="radio" data-value="image" />图片</label>
+                    <label for="wa_list_table_filter_type_video"><input id="wa_list_table_filter_type_video" name="wa_list_table_filter_type" type="radio" data-value="video" />视频</label>
+                </div>
+                <div>
+                    <div>涉嫌场景：</div><div id="wa_list_scene_option_container"><label for="wa_list_scene_option_1"><input id="wa_list_scene_option_1" type="checkbox" />非法</label></div>
+                </div>
+                <div>
+                    <div>涉嫌物品：</div><div id="wa_list_object_option_container"><label for="wa_list_object_option_1"><input id="wa_list_object_option_1" type="checkbox" />非法</label></div>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div id="wa_list_setting_buttongroup">
+            <button class="btn-info" onclick="resetNormal()">全部设为正常</button>
+            <button class="btn-danger" onclick="resetIllegal()">全部设为违规</button>
+        </div>
+
+        <p id="wa_list_result_num">检索结果，共计：<span></span> 条记录</p>
+        <div id="wa_list_table_container"></div>
+
+        <div id="wa_list_submit">
+            <button class="btn-success" onclick="auditSubmit()">确认提交</button>
+        </div>
+    </section>
+
+    <footer>
+        <p>@copy right reserved by Qiniu</p>
+    </footer>
+
+    <div class="wa-modal-loading component-hidden">
+        <img src="/imgs/loading.png" alt="">
+    </div>
+
+    <script src="./javascript/config.js"></script>
+    <script src="./javascript/audit.js"></script>
+</body>
+</html>

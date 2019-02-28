@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API测试页面</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div id="root">API测试页面</div>
+    <div id="root">使用 nodejs + nginx + serving eval + mongodb 架构</div>
+    <pre>
+let postBody = {
+  method:'POST',
+  headers:{
+      'Content-Type':'application/json',
+  },
+  body: JSON.stringify({
+      data: {
+          uri: 'https://assets.academy.com/mgen/71/20039771.jpg'
+      }
+  })
+}
+fetch('/v1/terrordetect', postBody).then(e => e.text()).then(e => console.log(e))
+
+curl localhost:3000/upload -F "file=@/Users/xiaohuini/Projects/Qiniu/FAS/images/a.jpg" -F 'metadata={"ip":"192.168.1.1","port":"3306"}'
+
+curl localhost:3000/upload
+    </pre>
+
+    <script>
+        
+    </script>
+  </body>
+</html>

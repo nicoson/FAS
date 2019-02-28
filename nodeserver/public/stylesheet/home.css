@@ -1,0 +1,28 @@
+section {
+  background: #0f3f5c;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  color: white;
+}
+#wxb_home_leftpanel {
+  width: 30vw;
+}
+#wxb_home_leftpanel #wxb_home_taskpool {
+  width: 30vw;
+  height: 30vw;
+}
+#wxb_home_middlepanel {
+  width: 30vw;
+}
+#wxb_home_middlepanel #wxb_home_taskinfo {
+  width: 30vw;
+  height: 30vw;
+}
+#wxb_home_rightpanel {
+  width: 30vw;
+}
+#wxb_home_rightpanel #wxb_home_taskmeta {
+  width: 30vw;
+  height: 30vw;
+}

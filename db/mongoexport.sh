@@ -1,0 +1,1 @@
+mongoexport -h 10.34.36.42:37117 -d acss -c feature -o md5.json

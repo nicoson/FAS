@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>API测试页面</title>
+</head>
+<body>
+    <div id="root">API测试页面</div>
+    <div id="root">使用 httpserver + nginx + serving eval + mongodb 架构</div>
+    <pre>
+let postBody = {
+    method:'POST',
+    headers:{
+        'Content-Type':'application/json',
+    },
+    body: JSON.stringify({
+        data: {
+            uri: 'https://assets.academy.com/mgen/71/20039771.jpg'
+        }
+    })
+}
+fetch('/v1/terrordetect', postBody).then(e => e.text()).then(e => console.log(e))
+    </pre>
+
+    <script>
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+header {
+  height: 12vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: 'Weibei SC';
+}
+header div {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+header div:first-child {
+  height: 70%;
+}
+header div:first-child img {
+  height: 80%;
+  margin-left: 5vw;
+}
+header div:first-child p {
+  margin-left: 5vw;
+  font-size: 2rem;
+}
+header div#navbar {
+  justify-content: flex-start;
+  background: #add2df;
+  font-size: 1.2rem;
+  height: 30%;
+  padding-left: 2rem;
+}
+header div#navbar a {
+  color: #777;
+  text-decoration: none;
+  padding: .5rem 1.2rem;
+  color: #00a7de;
+  width: 10rem;
+  text-align: center;
+}
+header div#navbar a.wa-home-nav-selected {
+  background: #00a7de;
+  color: white;
+}
+header div#navbar a:hover {
+  background: #51b9db;
+  color: white;
+}
+section {
+  height: 81vh;
+  padding: 2vh;
+  overflow: auto;
+}
+footer {
+  height: 7vh;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: #eee;
+}
+footer p {
+  text-align: center;
+  font-size: .7rem;
+  margin: 0!important;
+}

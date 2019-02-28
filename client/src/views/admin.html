@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>违法有害信息上报平台</title>
+    <link rel="stylesheet" href="./stylesheet/common.css">
+    <link rel="stylesheet" href="./stylesheet/layout.css">
+    <link rel="stylesheet" href="./stylesheet/list.css">
+</head>
+<body>
+    <header>
+        <div>
+            <img src="/imgs/qiniulogo.png" alt="">
+            <p>违法有害信息上报平台</p>
+        </div>
+        <div id="navbar"></div>
+    </header>
+
+    <section>
+        <div id="wa_list_filter_bar">
+            <div>
+                开始日期 <input id="wa_list_table_datefrom" type="date" /> 
+                截止日期 <input id="wa_list_table_dateto" type="date" />
+                <button id="wa_list_filter_submit" class="btn-success" onclick="reloadData()">获取数据</button>
+            </div>
+            <div>
+                <button id="wa_list_filter_export" class="btn-info" onclick="exportExcel('wa_list_table_export')">导出excel</button>
+                <table id="wa_list_table_export" class="component-hidden"></table>
+            </div>
+        </div>
+        
+        <p id="wa_list_result_num">检索结果，共计：<span></span> 条记录</p>
+        <div id="wa_list_table_container">
+            <table id="wa_list_table">
+                <tr>
+                    <th>序号</th>
+                    <th>查处日期</th>
+                    <th>md5</th>
+                    <th>etag</th>
+                    <th>文件名</th>
+                    <th>文件类型</th>
+                    <th>违规类型</th>
+                    <th>上传日期</th>
+                    <th>上传IP</th>
+                    <th>端口号</th>
+                    <th>用户名</th>
+                    <th>电话</th>
+                    <th>公司</th>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <footer>
+        <p>@copy right reserved by Qiniu</p>
+    </footer>
+
+    <div class="wa-modal-loading component-hidden">
+        <img src="/imgs/loading.png" alt="">
+    </div>
+
+    <script src="./javascript/config.js"></script>
+    <script src="./javascript/filesaver.min.js"></script>
+    <script src="./javascript/table.js"></script>
+</body>
+</html>
