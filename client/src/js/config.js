@@ -1,6 +1,6 @@
-let APIHOST = '';
-// let APIHOST = 'http://0.0.0.0:3000';
-// let APIHOST = 'http://100.100.62.149:3000';
+// let APIHOST = '';
+let APIHOST = 'http://0.0.0.0:3000';
+// let APIHOST = 'http://100.100.62.149:8888';
 
 if(sessionStorage.islogin == undefined || sessionStorage.islogin != 'true') {
     location.href = '/index.html';
