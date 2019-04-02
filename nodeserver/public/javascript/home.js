@@ -11,18 +11,16 @@ function getList() {
         if(res.code == 200) {
             let data = res.data;
             // fillStatic(data);
-            let taskpooldata = [data.taskpoolnum-data.taskpoollocknum, data.taskpoolimagenum, data.taskpoolvideonum, data.taskpoollocknum];
-            let fileinfodata = [data.fileinfonum, data.fileinfoimagenum, data.fileinfovideonum, data.fileinforeviewtruenum, data.fileinforeviewtrueimagenum, data.fileinforeviewtruevideonum, data.fileinforeviewnum, data.fileinforeviewimagenum, data.fileinforeviewvideonum];
-            let filemetadata = [data.filemetanum, data.filemetaimagenum, data.filemetavideonum, data.filemetaipnum];
-            drawCharts(taskpooldata,fileinfodata,filemetadata);
+            let taskpooldata = [data.taskpoolnum, data.taskpoolimagenum, data.taskpoolvideonum];
+            let fileinfodata = [data.fileinfonum, data.fileinfoimagenum, data.fileinfovideonum];
+            drawCharts(taskpooldata,fileinfodata);
         }
     });
 }
 
-function drawCharts(taskpooldata,fileinfodata,filemetadata) {
-    let taskpoolchart = drawBar('wxb_home_taskpool','TaskPool',['待处理','待处理-图片','待处理-视频','处理中'],taskpooldata);
-    let fileinfochart = drawBar('wxb_home_taskinfo','FileInfo',['总量', '总量-图片', '总量-视频', '已人工审核涉嫌违规', '已人工审核涉嫌违规-图片', '已人工审核涉嫌违规-视频','待人工审核','待人工审核-图片','待人工审核-视频'],fileinfodata);
-    let filemetachart = drawBar('wxb_home_taskmeta','FileMeta',['总量', '总量-图片', '总量-视频','独立IP数量'],filemetadata);
+function drawCharts(taskpooldata,fileinfodata) {
+    let taskpoolchart = drawBar('wxb_home_taskpool','TaskPool',['待处理','待处理-图片','待处理-视频'],taskpooldata);
+    let fileinfochart = drawBar('wxb_home_taskinfo','Illegal',['违规总量', '违规图片', '违规视频'],fileinfodata);
 }
 
 function drawBar(ele,title,label,data) {

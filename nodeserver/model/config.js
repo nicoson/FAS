@@ -8,24 +8,9 @@ module.exports = {
     UPLOAD_PATH:    "./public/files",
     FILESERVER:     "http://100.100.33.247:3000/files",
     CLASSIFY: {
-        "bloodiness_human": "流血",
-        "bomb_fire": "爆炸-火焰",
-        "bomb_smoke": "爆炸-烟雾",
-        "bomb_vehicle": "爆炸-汽车",
-        "bomb_self-burning": "爆炸-自焚",
-        "beheaded_isis": "isis 斩首",
-        "beheaded_decollation": "砍头",
-        "march_banner": "游行横幅",
-        "march_crowed": "密集人群",
-        "fight_police": "涉警",
-        "fight_person": "斗殴",
-        "character": "特殊文字",
-        "masked": "面罩",
-        "army": "军队",
-        "scene_person": "敏感人物",
-        "anime_likely_bloodiness": "动漫流血",
-        "anime_likely_bomb": "动漫爆炸",
-        "islamic_dress": "伊斯兰穿着"
+        "pulp": "涉黄",
+        "terror": "涉暴",
+        "politician": "敏感人物"
     },
     DETECTION: {
         "knives_true": "真刀",

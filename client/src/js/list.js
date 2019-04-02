@@ -37,7 +37,7 @@ function getFilterItem() {
         };
         ITEMS = Object.assign(data.classItem, data.detectItem);
         document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
-        document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
+        // document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
     });
 }
 
@@ -66,16 +66,16 @@ function getTableList(isAppend = false) {
 function requestIllegalData() {
     let startDate = document.querySelector('#wa_list_table_datefrom').value;
     let endDate = document.querySelector('#wa_list_table_dateto').value;
-    let md5 = document.querySelector("#wa_list_table_filter_md5").value.trim();
+    // let md5 = document.querySelector("#wa_list_table_filter_md5").value.trim();
     let filetype = document.querySelector('[name=wa_list_table_filter_type]:checked').dataset.value;
     let url = APIHOST + '/getillegaldata';
     postBody.body = JSON.stringify({
         startDate: startDate,
         endDate: endDate,
-        md5: md5,
+        // md5: md5,
         classifyOption: [...CLASSOPTION],
         detectOption: [...DETECTOPTION],
-        filetype: filetype,
+        type: filetype,
         page: PAGENUM,
         pagesize: PAGESIZE
     });
@@ -114,28 +114,27 @@ function fillListTable(ele, data, isAppend=false) {
                                     <th>序号</th>
                                     <th>查处日期</th>
                                     <th>文件</th>
-                                    <th>md5</th>
                                     <th>文件类型</th>
                                     <th>来源</th>
                                     <th>涉嫌违规场景</th>
-                                    <th>置信度</th>
                                     <th>IP端口</th>
                                 </tr>`;
     for(let i in data) {
+        // if()
+        // let tmp = `<img src="${data[i].uri}">`
         list += `<tr class="wa-list-table-tr-main" data-ind=${i}>
                     <td>${PAGENUM*PAGESIZE + Number(i) + 1}</td>
                     <td>${new Date(data[i].audit_date).toLocaleDateString()}</td>
                     <td>
                         <a href="${data[i].uri}" target="_blank" onclick="showContent(event)">
-                            <img src="${(typeof(data[i].message)=='undefined') ? data[i].uri : data[i].message.cover}">
+
+                            <${(data[i].type=='image')?'img':'video'} src="${data[i].uri}">
                         </a>
                     </td>
-                    <td><p>${data[i].md5}</p></td>
                     <td>${fileTypeMap(data[i].type)}</td>
-                    <td>${fileSourceMap(data[i].source)+fileIconDom(data[i].source)}</td>
-                    <td>${data[i].ops.wangan_mix.labels.length == 0 ? '' : [...(new Set(data[i].ops.wangan_mix.labels.map(item => {return ITEMS[item.label]})))].join(',')}</td>
-                    <td>${data[i].ops.wangan_mix.labels.length == 0 ? '' : (data[i].ops.wangan_mix.labels[0].score*100).toFixed(2)}%</td>
-                    <td>${data[i].up_address}</td>
+                    <td>${'xxx'}</td>
+                    <td>${fileType(data[i])}</td>
+                    <td>${'xxx.xxx.xxx.xxx'}</td>
                 </tr>
                 <tr class="component-hidden"></tr>`;
     }
@@ -236,11 +235,11 @@ function showContent(event) {
 
 function fileTypeMap(type) {
     switch(type) {
-        case 1:
+        case 'image':
             return '图片';
-        case 2:
+        case 'video':
             return '视频';
-        case 3:
+        case 'audio':
             return '音频';
     }
 }
@@ -275,4 +274,12 @@ function fileIconDom(source) {
             break;
     }
     return `<img class="fas-list-table-icon" src="/imgs/favicon/${filename}" />`;
+}
+
+function fileType(datum) {
+    let res = [];
+    if(datum.rets.result.scenes.pulp.suggestion == 'block') res.push('涉黄');
+    if(datum.rets.result.scenes.terror.suggestion == 'block') res.push('涉暴');
+    if(datum.rets.result.scenes.politician.suggestion == 'block') res.push('敏感人物');
+    return res.join(',');
 }

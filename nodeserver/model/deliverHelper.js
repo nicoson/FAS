@@ -287,7 +287,7 @@ class deliverHelper {
         }
 
         //  step 3: insert result
-        resData.label = (resData.result.suggestion == 'pass') ? 0 : 1;
+        resData.label = (resData.result.suggestion != 'block') ? 0 : 1;
         let res = await this.insertIllegal(task.data, [resData]).catch(err => {console.log('insertFileInfo err: ', err); return;});
         if(res.code == 500) {
             console.log('insert fileinfo data failed, abort now ...');

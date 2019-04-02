@@ -35,9 +35,9 @@ function getFilterItem() {
         for(let item in data.classItem) {
             sceneTemp += `<div><label for="wa_list_scene_option_${item}"><input id="wa_list_scene_option_${item}" type="checkbox" data-option="${item}" onchange="sceneOptionChange(event)" ${CLASSOPTION.has(item) ? 'checked':''}/>${data.classItem[item]}</label></div>`
         }
-        for(let item in data.detectItem) {
-            objectTemp += `<div><label for="wa_list_object_option_${item}"><input id="wa_list_object_option_${item}" type="checkbox" data-option="${item}" onchange="objectOptionChange(event)" ${DETECTOPTION.has(item) ? 'checked':''} />${data.detectItem[item]}</label></div>`
-        };
+        // for(let item in data.detectItem) {
+        //     objectTemp += `<div><label for="wa_list_object_option_${item}"><input id="wa_list_object_option_${item}" type="checkbox" data-option="${item}" onchange="objectOptionChange(event)" ${DETECTOPTION.has(item) ? 'checked':''} />${data.detectItem[item]}</label></div>`
+        // };
         ITEMS = Object.assign(data.classItem, data.detectItem);
         document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
         document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
@@ -99,10 +99,6 @@ function fillCardList(data) {
                     <div class="wa-list-card-result">
                         <table>
                             <tr>
-                                <td>文件来源：</td>
-                                <td>${fileSourceMap(datum.source)+fileIconDom(datum.source)}</td>
-                            </tr>
-                            <tr>
                                 <td>检出方法：</td>
                                 <td>模型</td>
                             </tr>
@@ -112,11 +108,7 @@ function fillCardList(data) {
                             </tr>
                             <tr>
                                 <td>违规场景：</td>
-                                <td>${datum.ops.wangan_mix.labels.length == 0 ? '' : [...(new Set(datum.ops.wangan_mix.labels.map(item => {return ITEMS[item.label]})))].join(',')}</td>
-                            </tr>
-                            <tr>
-                                <td>置信度：</td>
-                                <td>${datum.ops.wangan_mix.labels.length == 0 ? '' : (datum.score*100).toFixed(2)}%</td>
+                                <td>${'xxx'}</td>
                             </tr>
                         </table>
                     </div>
@@ -241,43 +233,11 @@ function showContent(event) {
 
 function fileTypeMap(type) {
     switch(type) {
-        case 1:
+        case 'image':
             return '图片';
-        case 2:
+        case 'video':
             return '视频';
-        case 3:
+        case 'audio':
             return '音频';
     }
-}
-
-function fileSourceMap(source) {
-    switch(source) {
-        case 1:
-            return '七牛云存储';
-        case 2:
-            return '新浪微博';
-        case 3:
-            return '抖音';
-        case 4:
-            return '秒拍';
-    }
-}
-
-function fileIconDom(source) {
-    let filename = '';
-    switch(source) {
-        case 1:
-            filename = 'qiniu_favicon.ico';
-            break;
-        case 2:
-            filename = 'sina_favicon.png';
-            break;
-        case 3:
-            filename = 'douyin_favicon.ico';
-            break;
-        case 4:
-            filename = 'miaopai_favicon.ico';
-            break;
-    }
-    return `<img src="/imgs/favicon/${filename}" />`;
 }

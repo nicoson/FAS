@@ -22,6 +22,9 @@ section > div {
 #wa_list_filter_bar > div.noflex {
   display: block;
 }
+#wa_list_filter_bar > div.inline-block {
+  justify-content: flex-start;
+}
 #wa_list_filter_bar #wa_list_scene_option_container,
 #wa_list_filter_bar #wa_list_object_option_container {
   display: flex;
@@ -30,7 +33,6 @@ section > div {
 }
 #wa_list_filter_bar #wa_list_scene_option_container > div,
 #wa_list_filter_bar #wa_list_object_option_container > div {
-  width: 200px;
   flex-shrink: 0;
 }
 #wa_list_setting_buttongroup {

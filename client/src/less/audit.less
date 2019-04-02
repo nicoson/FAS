@@ -30,12 +30,16 @@ section {
         display: block;
     }
 
+    >div.inline-block {
+        justify-content: flex-start;
+    }
+
     #wa_list_scene_option_container, #wa_list_object_option_container {
         display: flex;
         justify-content: flex-start;
         flex-wrap: wrap;
         >div {
-            width: 200px;
+            // width: 100px;
             flex-shrink: 0;
         }
     }

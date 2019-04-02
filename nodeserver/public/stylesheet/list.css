@@ -30,7 +30,6 @@ section > div {
 #wa_list_filter_bar > div:nth-child(3) #wa_list_scene_option_container > div,
 #wa_list_filter_bar > div:nth-child(2) #wa_list_object_option_container > div,
 #wa_list_filter_bar > div:nth-child(3) #wa_list_object_option_container > div {
-  width: 200px;
   flex-shrink: 0;
 }
 #wa_list_filter_bar input {

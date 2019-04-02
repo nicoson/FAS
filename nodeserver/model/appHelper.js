@@ -62,8 +62,8 @@ class appHelper {
     // get files from <videos> table
     async getDataFromDB(conditions={}, size=50, skip=0) {
         console.log('|** appHelper.getDataFromDB **| INFO: get data from <videos> table for list view| ', new Date());
-        let res = await DBConn.queryData('results', conditions, size, skip).catch(err => {console.log(err); return []});
-        let num = await DBConn.count('results', conditions).catch(err => {console.log(err); return []});
+        let res = await DBConn.queryData('illegal', conditions, size, skip).catch(err => {console.log(err); return []});
+        let num = await DBConn.count('illegal', conditions).catch(err => {console.log(err); return []});
         return {
             num: num,
             res: res
@@ -79,10 +79,10 @@ class appHelper {
         let operations = data.map(datum => {
             return {
                 updateMany: {
-                    filter: {uri: datum.uri},
+                    filter: {uid: datum.uid},
                     update: {$set: {
-                        review_result: datum.manualreview,
-                        audit_date: timestamp
+                        manualreview: datum.manualreview,
+                        update: timestamp
                     }}
                 }
             };
@@ -100,40 +100,18 @@ class appHelper {
                     DBConn.count('taskpool'),
                     DBConn.count('taskpool', {filetype: 'image'}),
                     DBConn.count('taskpool', {filetype: 'video'}),
-                    DBConn.count('taskpool', {status: 'locked'}),
-                    DBConn.count('fileinfo'),
-                    DBConn.count('fileinfo', {filetype: 'image'}),
-                    DBConn.count('fileinfo', {filetype: 'video'}),
-                    DBConn.count('fileinfo', {$and: [{manualreview: null},{illegal: true}]}),
-                    DBConn.count('fileinfo', {$and: [{manualreview: null},{illegal: true},{filetype: 'image'}]}),
-                    DBConn.count('fileinfo', {$and: [{manualreview: null},{illegal: true},{filetype: 'video'}]}),
-                    DBConn.count('fileinfo', {manualreview: true}),
-                    DBConn.count('fileinfo', {$and: [{manualreview: true},{filetype: 'image'}]}),
-                    DBConn.count('fileinfo', {$and: [{manualreview: true},{filetype: 'video'}]}),
-                    DBConn.count('filemeta'),
-                    DBConn.count('filemeta', {filetype: 'image'}),
-                    DBConn.count('filemeta', {filetype: 'video'}),
-                    DBConn.distinct('filemeta', 'meta.ip'),
+                    DBConn.count('illegal'),
+                    DBConn.count('illegal', {type: 'image'}),
+                    DBConn.count('illegal', {type: 'video'})
                 ];
                 Promise.all(p).then(res => {
                     resolve({
                         taskpoolnum: res[0],
                         taskpoolimagenum: res[1],
                         taskpoolvideonum: res[2],
-                        taskpoollocknum: res[3],
-                        fileinfonum: res[4],
-                        fileinfoimagenum: res[5],
-                        fileinfovideonum: res[6],
-                        fileinforeviewnum: res[7],
-                        fileinforeviewimagenum: res[8],
-                        fileinforeviewvideonum: res[9],
-                        fileinforeviewtruenum: res[10],
-                        fileinforeviewtrueimagenum: res[11],
-                        fileinforeviewtruevideonum: res[12],
-                        filemetanum: res[13],
-                        filemetaimagenum: res[14],
-                        filemetavideonum: res[15],
-                        filemetaipnum: res[16]
+                        fileinfonum: res[3],
+                        fileinfoimagenum: res[4],
+                        fileinfovideonum: res[5]
                     });
                 }).catch(err => reject(err));
             });
