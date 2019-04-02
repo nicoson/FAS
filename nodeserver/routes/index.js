@@ -2,16 +2,13 @@ const express	= require('express');
 const router	= express.Router();
 const log4js	= require('log4js');
 const multer	= require('multer');
-const fs		= require('fs');
 const config	= require('../model/config');
 const storeHelper	= require('../model/storeHelper');
 const deliverHelper = require('../model/deliverHelper');
 const appHelper = require('../model/appHelper');
-const spiderHelper = require('../model/spider/spider');
 let sh			= new storeHelper();
 let dh			= new deliverHelper();
 let ah			= new appHelper();
-let spider		= new spiderHelper();
 const upload	= multer({ dest: config.UPLOAD_PATH });
 
 log4js.configure({
@@ -192,13 +189,18 @@ router.post('/getfilemeta', function(req, res, next) {
       server side api 
 \* ====================== */
 //	upload file to queue table
-router.post('/upload', upload.array('file'), function(req, res, next) {
-	let files = req.files;
-	// console.log(files);
-	// console.log(req.body.metadata);
+router.post('/v1/image', function(req, res, next) {
+	// console.log(req.body);
+	sh.storeProcess(req.body, 'image');
+	res.send({
+		code: 200,
+		msg: 'task accepted'
+	});
+});
 
-	sh.storeProcess(files[0], JSON.parse(req.body.metadata || '{}'));
-
+router.post('/v1/video', function(req, res, next) {
+	// console.log(req.body);
+	sh.storeProcess(req.body, 'video');
 	res.send({
 		code: 200,
 		msg: 'task accepted'
@@ -208,73 +210,10 @@ router.post('/upload', upload.array('file'), function(req, res, next) {
 //	trigger audit process
 router.get('/trigger', function(req, res, next) {
 	dh.processBatchImg();
+	dh.processBatchVideo();
 	res.send({
 		code: 200,
 		msg: 'audit task triggered'
-	});
-});
-
-
-
-
-/* ====================== *\
-		spider api 
-\* ====================== */
-//	get spider job list
-router.get('/spidergetjoblist', function(req, res, next) {
-	let jobs = spider.getJobs();
-	let p = [];
-	let q = []
-	for(let job in jobs) {
-		p.push(spider.queryData(jobs[job].key,jobs[job].city));
-		let temp = jobs[job];
-		temp.jobid = job;
-		q.push(temp);
-	}
-	Promise.all(p).then(result => {
-		result.map((data, ind) => {
-			q[ind].num = data;
-		})
-		res.send({
-			code: 0,
-			res: q
-		});
-	});
-});
-
-//	create spider job
-router.post('/spidercreatejob', function(req, res, next) {
-	let jobid = spider.createSpiderJob(req.body.key, req.body.city);
-	res.send({
-		code: 0,
-		res: jobid
-	});
-});
-
-//	pause spider job
-router.get('/spiderpausejob', function(req, res, next) {
-	let jobid = spider.pauseSpiderJob(req.query.jobid);
-	res.send({
-		code: 0,
-		res: jobid
-	});
-});
-
-//	restart spider job
-router.get('/spiderstartjob', function(req, res, next) {
-	let jobid = spider.startSpiderJob(req.query.jobid);
-	res.send({
-		code: 0,
-		res: jobid
-	});
-});
-
-//	destory spider job
-router.get('/spiderdestoryjob', function(req, res, next) {
-	let jobid = spider.destorySpiderJob(req.query.jobid);
-	res.send({
-		code: 0,
-		res: jobid
 	});
 });
 

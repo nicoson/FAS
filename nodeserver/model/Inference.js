@@ -46,8 +46,8 @@ class InferenceHelper {
         }
 
         this.options.body = reqBody;
-        let token = gt.genToken(api, this.options.body, false);
-        this.options.headers.Authorization = token;
+        // let token = gt.genToken(api, this.options.body, false);
+        // this.options.headers.Authorization = token;
 
         return new Promise(function(resolve, reject){
             // if(url.search(/.png|.jpg|.jpeg|.webp|.bmp|.gif/i) < 0) {
@@ -85,15 +85,14 @@ class InferenceHelper {
                 for(let datum of data) {
                     let reqBody = JSON.stringify({
                         "data": {
-                            "uri": datum.filepath
+                            "uri": datum.uri
                         },
                         "params": {
-                            "type": [
+                            "scenes": [
                                 "pulp",
                                 "terror",
                                 "politician"
-                            ],
-                            "detail": true
+                            ]
                         }
                     });
                     p.push(this.censorCall(config.CENSORIMGAPI, reqBody));
