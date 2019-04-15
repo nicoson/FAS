@@ -58,10 +58,12 @@ table#wa_list_table th {
   word-wrap: break-word;
 }
 table#wa_list_table td img,
-table#wa_list_table th img,
+table#wa_list_table th img {
+  width: 10rem;
+}
 table#wa_list_table td video,
 table#wa_list_table th video {
-  width: 10rem;
+  width: 20rem;
 }
 table#wa_list_table td img:hover,
 table#wa_list_table th img:hover,

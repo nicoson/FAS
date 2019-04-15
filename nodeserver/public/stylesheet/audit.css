@@ -76,7 +76,7 @@ section > div {
 #wa_list_table_container .wa-list-card .wa-list-card-frame video:hover {
   cursor: pointer;
   outline: 3px solid red;
-  opacity: 0.2;
+  opacity: 1;
   cursor: zoom-in;
 }
 #wa_list_table_container .wa-list-card .wa-list-card-result {

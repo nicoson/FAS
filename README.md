@@ -34,3 +34,6 @@ Field Analysis System 现场分析系统
     > cd db
     > sh mongoimport.sh
     ```
+
+    
+    docker run -d --network=host --restart=always -p 3333:3333 -v $(pwd)/files:/workspace/server/public/files fas

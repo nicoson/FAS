@@ -13,6 +13,7 @@ class deliverHelper {
     }
 
     init() {
+        this.starter = false;
     }
 
     // get tasks in queue
@@ -87,11 +88,17 @@ class deliverHelper {
 
     async deleteFiles(rawdata, resdata) {
         console.log('|** deliverHelper.deleteFiles **| INFO: delete files from temp dir', new Date());
-        for(let i in rawdata) {
-            if(resdata[i].label == 0) {
-                await fs.unlink(`${savepath}/${rawdata[i].uid}`);
+        try{
+            for(let i in rawdata) {
+                if(!this.judgeIllegal(resdata[i])) {
+                    await fs.unlinkSync(`${savepath}/${rawdata[i].uid}`);
+                }
             }
         }
+        catch(err) {
+            console.log('|** deliverHelper.deleteFiles **| INFO: delete files err: ', err);
+        }
+        
         return {code: 200};
     }
 
@@ -100,7 +107,8 @@ class deliverHelper {
         let infoData = [];
         let timestamp = new Date();
         data.map((datum, ind) => {
-            if(datum.label == 1) {
+            console.log('=======> datum: ', datum);
+            if(this.judgeIllegal(datum)) {
                 infoData.push({
                     uid: rawdata[ind].uid,
                     create: rawdata[ind].create,
@@ -108,8 +116,8 @@ class deliverHelper {
                     uri: rawdata[ind].uri,
                     type: rawdata[ind].type,
                     rets: datum,
+                    filename: rawdata[ind].name,
                     manualreview: null,
-                    illegal: datum.label == 1 ? true : false
                 });
             }
         });
@@ -188,7 +196,6 @@ class deliverHelper {
         
         //  step 3: insert data
         let res = await this.insertIllegal(queueData.data, resData.data).catch(err => {console.log('insertIllegal err: ', err); return;});
-        console.log('xx res: ', res);
         if(res.code == 500) {
             console.log('insert insertIllegal data failed, abort now ...');
             return {code: 500, msg: 'insert insertIllegal data failed', status: 1};
@@ -216,34 +223,6 @@ class deliverHelper {
             msg: `${queueData.data.length} data were handled ...`,
             status: 1
         };
-    }
-
-    processBatchImg(interval=200) {
-        setTimeout(function(){
-            this.atomProcess(20).then(e => {
-                console.log('processBatch: continue');
-                if(e.status == 1) {
-                    this.processBatchImg();
-                } else {
-                    console.log('processBatch: no data waiting ...');
-                    this.processBatchImg(10000);
-                }
-            });
-        }.bind(this), interval);
-    }
-
-    processBatchVideo(interval=200) {
-        setTimeout(function(){
-            this.videoProcess(1).then(e => {
-                console.log('processBatch: continue');
-                if(e.status == 1) {
-                    this.processBatchVideo();
-                } else {
-                    console.log('processBatch: no data waiting ...');
-                    this.processBatchVideo(10000);
-                }
-            });
-        }.bind(this), interval);
     }
 
     async videoProcess(size=1) {
@@ -287,13 +266,12 @@ class deliverHelper {
         }
 
         //  step 3: insert result
-        resData.label = (resData.result.suggestion != 'block') ? 0 : 1;
-        let res = await this.insertIllegal(task.data, [resData]).catch(err => {console.log('insertFileInfo err: ', err); return;});
+        // resData.label = (resData.result.suggestion != 'block') ? 0 : 1;
+        let res = await this.insertIllegal(task.data, [resData.result]).catch(err => {console.log('insertFileInfo err: ', err); return;});
         if(res.code == 500) {
             console.log('insert fileinfo data failed, abort now ...');
             return {code: 500, msg: 'insert fileinfo data failed', status: 1};
         }
-        console.log("insert fileinfo");
         
         //  step 4: delete task
         res = await this.deleteTasks(task.data).catch(err => {console.log('deleteTasks err: ', err); return;});
@@ -316,6 +294,47 @@ class deliverHelper {
             msg: `${task.data.length} data were handled ...`,
             status: 1
         };
+    }
+
+    judgeIllegal(datum) {
+        //  illegal: true;  normal: false
+        return (datum.suggestion != 'pass');
+    }
+
+    processBatchImg(interval=200) {
+        setTimeout(function(){
+            if(this.starter) {
+                this.atomProcess(20).then(e => {
+                    console.log('processBatchImg: continue');
+                    if(e.status == 1) {
+                        this.processBatchImg();
+                    } else {
+                        console.log('processBatchImg: no data waiting ...');
+                        this.processBatchImg(10000);
+                    }
+                });
+            } else {
+                console.log('processBatchImg: audit worker stopped ...');
+            }
+        }.bind(this), interval);
+    }
+
+    processBatchVideo(interval=200) {
+        setTimeout(function(){
+            if(this.starter) {
+                this.videoProcess(1).then(e => {
+                    console.log('processBatchVideo: continue');
+                    if(e.status == 1) {
+                        this.processBatchVideo();
+                    } else {
+                        console.log('processBatchVideo: no data waiting ...');
+                        this.processBatchVideo(10000);
+                    }
+                });
+            } else {
+                console.log('processBatchVideo: audit worker stopped ...');
+            }
+        }.bind(this), interval);
     }
 }
 

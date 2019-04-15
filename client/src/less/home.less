@@ -1,9 +1,20 @@
 section {
     background: #0f3f5c;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
     color: white;
+
+    >div {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        margin: 3rem 0;
+
+        &:first-child {
+            justify-content: center;
+            button {
+                margin: 2rem;
+            }
+        }
+    }
 }
 
 #wxb_home_leftpanel {

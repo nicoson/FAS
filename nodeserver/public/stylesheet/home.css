@@ -1,9 +1,18 @@
 section {
   background: #0f3f5c;
+  color: white;
+}
+section > div {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  color: white;
+  margin: 3rem 0;
+}
+section > div:first-child {
+  justify-content: center;
+}
+section > div:first-child button {
+  margin: 2rem;
 }
 #wxb_home_leftpanel {
   width: 30vw;

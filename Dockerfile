@@ -9,4 +9,4 @@ COPY ./nodeserver /workspace/server/
 EXPOSE 80 3000
 
 WORKDIR /workspace/server
-CMD ["npm start"]
+CMD ["npm", "start"]

@@ -1,6 +1,11 @@
-// let APIHOST = '';
-let APIHOST = 'http://0.0.0.0:3000';
-// let APIHOST = 'http://100.100.62.149:3000';
+// prod env
+let APIHOST = '';
+let FILEHOST = '';
+
+// test env
+// let APIHOST = 'http://localhost:3000';
+// let APIHOST = 'http://100.100.62.163:3333';
+// let FILEHOST = 'http://100.100.62.163:3333';
 
 if(sessionStorage.islogin == undefined || sessionStorage.islogin != 'true') {
     location.href = '/index.html';
@@ -15,7 +20,7 @@ let page = {
     // admin:  '列表管理',
     audit:  '人工审核',
     list:   '结果列表',
-    spider: '数据源配置'
+    // spider: '数据源配置'
 };
 let navbartmp = '';
 for(let i in page) {

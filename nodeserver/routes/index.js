@@ -71,15 +71,21 @@ router.post('/rawdata', function(req, res, next) {
 		classes.map(op => {
 			switch(op) {
 				case 'pulp':
-					ops.push({'rets.result.scenes.pulp.suggestion': 'block'});break;
+					ops.push({'rets.scenes.pulp.suggestion': 'block'});break;
 				case 'terror':
-					ops.push({'rets.result.scenes.terror.suggestion': 'block'});break;
+					ops.push({'rets.scenes.terror.suggestion': 'block'});break;
 				case 'politician':
-					ops.push({'rets.result.scenes.politician.suggestion': 'block'});break;
+					ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});break;
 				default:
 					break;
 			}
 		});
+		conditions.$and.push({$or: ops});
+	} else {
+		let ops = [];
+		ops.push({'rets.scenes.pulp.suggestion': 'block'});
+		ops.push({'rets.scenes.terror.suggestion': 'block'});
+		ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});
 		conditions.$and.push({$or: ops});
 	}
 	
@@ -121,15 +127,21 @@ router.post('/getillegaldata', function(req, res, next) {
 		classes.map(op => {
 			switch(op) {
 				case 'pulp':
-					ops.push({'rets.result.scenes.pulp.suggestion': 'block'});break;
+					ops.push({'rets.scenes.pulp.suggestion': 'block'});break;
 				case 'terror':
-					ops.push({'rets.result.scenes.terror.suggestion': 'block'});break;
+					ops.push({'rets.scenes.terror.suggestion': 'block'});break;
 				case 'politician':
-					ops.push({'rets.result.scenes.politician.suggestion': 'block'});break;
+					ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});break;
 				default:
 					break;
 			}
 		});
+		conditions.$and.push({$or: ops});
+	} else {
+		let ops = [];
+		ops.push({'rets.scenes.pulp.suggestion': 'block'});
+		ops.push({'rets.scenes.terror.suggestion': 'block'});
+		ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});
 		conditions.$and.push({$or: ops});
 	}
 	
@@ -164,7 +176,7 @@ router.post('/getfilemeta', function(req, res, next) {
       server side api 
 \* ====================== */
 //	upload file to queue table
-router.post('/v1/image', function(req, res, next) {
+router.post('/v1/pic', function(req, res, next) {
 	// console.log(req.body);
 	sh.storeProcess(req.body, 'image');
 	res.send({
@@ -184,6 +196,7 @@ router.post('/v1/video', function(req, res, next) {
 
 //	trigger audit process
 router.get('/trigger', function(req, res, next) {
+	dh.starter = true;
 	dh.processBatchImg();
 	dh.processBatchVideo();
 	res.send({
@@ -192,5 +205,12 @@ router.get('/trigger', function(req, res, next) {
 	});
 });
 
+router.get('/stopper', function(req, res, next) {
+	dh.starter = false;
+	res.send({
+		code: 200,
+		msg: 'audit task stopped'
+	});
+});
 
 module.exports = router;

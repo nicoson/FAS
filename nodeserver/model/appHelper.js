@@ -98,8 +98,8 @@ class appHelper {
             return new Promise(function(resolve, reject) {
                 let p = [
                     DBConn.count('taskpool'),
-                    DBConn.count('taskpool', {filetype: 'image'}),
-                    DBConn.count('taskpool', {filetype: 'video'}),
+                    DBConn.count('taskpool', {type: 'image'}),
+                    DBConn.count('taskpool', {type: 'video'}),
                     DBConn.count('illegal'),
                     DBConn.count('illegal', {type: 'image'}),
                     DBConn.count('illegal', {type: 'video'})

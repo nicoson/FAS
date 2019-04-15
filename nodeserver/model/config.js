@@ -1,12 +1,20 @@
 module.exports = {
     // MONGODB:        "mongodb://100.100.62.149:37017",
     // DATABASE:       "qiniu-esp",
-    MONGODB:        "mongodb://100.100.62.221:27017",
+
+    // MONGODB:        "mongodb://100.100.62.163:27017",
+    // DATABASE:       "fas",
+    // CENSORIMGAPI:   "http://100.100.62.163:10000/v3/censor/image",
+    // CENSORVIDEOAPI: "http://100.100.62.163:11000/v3/censor/video",
+    // UPLOAD_PATH:    "./public/files",
+    // FILESERVER:     "http://100.100.62.163:3333/files",
+
+    MONGODB:        "mongodb://127.0.0.1:27017",
     DATABASE:       "fas",
-    CENSORIMGAPI:   "http://100.100.62.66:10000/v3/censor/image",
-    CENSORVIDEOAPI: "http://100.100.62.66:11000/v3/censor/video",
+    CENSORIMGAPI:   "http://127.0.0.1:10000/v3/censor/image",
+    CENSORVIDEOAPI: "http://127.0.0.1:11000/v3/censor/video",
     UPLOAD_PATH:    "./public/files",
-    FILESERVER:     "http://100.100.33.247:3000/files",
+    FILESERVER:     "http://127.0.0.1:3333/files",
     CLASSIFY: {
         "pulp": "涉黄",
         "terror": "涉暴",

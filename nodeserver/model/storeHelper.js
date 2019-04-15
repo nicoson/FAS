@@ -27,7 +27,7 @@ class storeHelper {
         //  step 2: generate data bodylet timestamp = (new Date()).getTime();
         let data = {
             uid: filename,
-            name: file.pic_name,
+            name: file.meta.pic_name,
             type: type,
             uri: `${config.FILESERVER}/${filename}`,
             create: timestamp,

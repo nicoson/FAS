@@ -83,16 +83,16 @@ function fillCardList(data) {
     let tmp = '';
     data.map((datum, ind) => {
         let thumb = '';
-        if(datum.type == 1) {
-            thumb = '<img src="' + datum.uri + '" alt="">';
-        } else if(typeof(datum.message) == 'undefined') {
-            thumb = '<video src="' + datum.uri + '">';
+        if(datum.type == 'image') {
+            thumb = '<img src="' + datum.uri.replace('http://127.0.0.1:3333', FILEHOST) + '" alt="">';
+        } else if(datum.type == 'video') {
+            thumb = '<video src="' + datum.uri.replace('http://127.0.0.1:3333', FILEHOST) + '"  controls="controls">';
         } else {
             thumb = '<img src="' + datum.message.cover + '" alt="">';
         }
         tmp += `<div class="wa-list-card ${SETTINGS.defaultClass == 'normal' ? '':'wa-list-card-abnormal'}" onclick="toggleClass(event)" data-index=${ind}>
                     <div class="wa-list-card-frame wa-list-card-frame-size-${SETTINGS.font}">
-                        <a href="${datum.uri}" onclick="showContent(event)" target="_blank">
+                        <a href="${datum.uri.replace('http://127.0.0.1:3333', FILEHOST)}" onclick="showContent(event)" target="_blank">
                             ${thumb}
                         </a>
                     </div>
@@ -108,7 +108,7 @@ function fillCardList(data) {
                             </tr>
                             <tr>
                                 <td>违规场景：</td>
-                                <td>${'xxx'}</td>
+                                <td>${illegalType(datum)}</td>
                             </tr>
                         </table>
                     </div>
@@ -240,4 +240,12 @@ function fileTypeMap(type) {
         case 'audio':
             return '音频';
     }
+}
+
+function illegalType(datum) {
+    let res = [];
+    if(datum.rets.scenes.pulp.suggestion != 'pass') res.push('涉黄');
+    if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
+    if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
+    return res.join(',');
 }

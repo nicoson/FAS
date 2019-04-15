@@ -18,6 +18,18 @@ function getList() {
     });
 }
 
+function startAudit() {
+    fetch(APIHOST + '/trigger').then(e => {
+        alert('过滤服务已开启 ...');
+    });
+}
+
+function stopAudit() {
+    fetch(APIHOST + '/stopper').then(e => {
+        alert('过滤服务已停止 ...');
+    });
+}
+
 function drawCharts(taskpooldata,fileinfodata) {
     let taskpoolchart = drawBar('wxb_home_taskpool','TaskPool',['待处理','待处理-图片','待处理-视频'],taskpooldata);
     let fileinfochart = drawBar('wxb_home_taskinfo','Illegal',['违规总量', '违规图片', '违规视频'],fileinfodata);

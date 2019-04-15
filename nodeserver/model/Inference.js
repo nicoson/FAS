@@ -86,6 +86,7 @@ class InferenceHelper {
                     let reqBody = JSON.stringify({
                         "data": {
                             "uri": datum.uri
+                            // "uri": datum.uri.replace('127.0.0.1','100.100.62.163')
                         },
                         "params": {
                             "scenes": [
@@ -101,16 +102,12 @@ class InferenceHelper {
                 Promise.all(p).then(res => {
                     console.log('censor Batch: ',res);
                     for(let i in res) {
-                        if(res[i].code == 0) {
-                            let result = this.resHandler(res[i]);
-                            respond.push(result);
+                        if(res[i].code == 200) {
+                            // let result = this.resHandler(res[i]);
+                            respond.push(res[i].result);
                         } else {
                             respond.push({
-                                "classify": {
-                                    "confidences": [{"class": "normal", "index": 1, "score": 1}]
-                                }, 
-                                "detection": [],
-                                "label": 0
+                                "suggestion": "error inference"
                             });
                         }
                     }
@@ -128,15 +125,14 @@ class InferenceHelper {
         }
     }
 
-    resHandler(data) {
-        //  set default as legal
-        console.log('data: ', data);
-        data.result.label = 0;
-        if (data.code == 0 && (data.result.classify.confidences[0].class != 'normal' || data.result.detection.length > 0)) {
-            data.result.label = 1;
-        }
-        return data.result;
-    }
+    // resHandler(data) {
+    //     //  set default as legal
+    //     console.log('data: ', data);
+    //     if (data.code == 200 && data.result.suggestion != 'pass') {
+    //         data.result.label = 1;
+    //     }
+    //     return data.result;
+    // }
 }
 
 module.exports = InferenceHelper;

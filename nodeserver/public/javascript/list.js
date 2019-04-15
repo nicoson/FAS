@@ -124,12 +124,9 @@ function fillListTable(ele, data, isAppend=false) {
         // let tmp = `<img src="${data[i].uri}">`
         list += `<tr class="wa-list-table-tr-main" data-ind=${i}>
                     <td>${PAGENUM*PAGESIZE + Number(i) + 1}</td>
-                    <td>${new Date(data[i].audit_date).toLocaleDateString()}</td>
+                    <td>${new Date(data[i].create).toLocaleDateString()}</td>
                     <td>
-                        <a href="${data[i].uri}" target="_blank" onclick="showContent(event)">
-
-                            <${(data[i].type=='image')?'img':'video'} src="${data[i].uri}">
-                        </a>
+                        <${(data[i].type=='image')?'img':'video'} src="${data[i].uri.replace('http://127.0.0.1:3333', FILEHOST)}" controls="controls">
                     </td>
                     <td>${fileTypeMap(data[i].type)}</td>
                     <td>${'xxx'}</td>
@@ -278,8 +275,8 @@ function fileIconDom(source) {
 
 function fileType(datum) {
     let res = [];
-    if(datum.rets.result.scenes.pulp.suggestion == 'block') res.push('涉黄');
-    if(datum.rets.result.scenes.terror.suggestion == 'block') res.push('涉暴');
-    if(datum.rets.result.scenes.politician.suggestion == 'block') res.push('敏感人物');
+    if(datum.rets.scenes.pulp.suggestion != 'pass') res.push('涉黄');
+    if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
+    if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
     return res.join(',');
 }
