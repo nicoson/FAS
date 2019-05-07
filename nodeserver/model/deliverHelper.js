@@ -262,7 +262,7 @@ class deliverHelper {
         console.log('resData: ', resData);
         if(typeof(resData.result) == 'undefined') {
             console.log('call api failed, abort now ...');
-            return {code: 500, msg: 'audit video failed', status: 1};
+            return {code: 500, msg: 'audit video failed: ' + resData.err, status: 1};
         }
 
         //  step 3: insert result
@@ -298,7 +298,7 @@ class deliverHelper {
 
     judgeIllegal(datum) {
         //  illegal: true;  normal: false
-        return (datum.suggestion != 'pass');
+        return (Object.keys(datum).length > 0 && datum.suggestion == 'block');
     }
 
     processBatchImg(interval=200) {

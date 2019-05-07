@@ -176,6 +176,7 @@ router.post('/getfilemeta', function(req, res, next) {
       server side api 
 \* ====================== */
 //	upload file to queue table
+//	only accept base64 file
 router.post('/v1/pic', function(req, res, next) {
 	// console.log(req.body);
 	sh.storeProcess(req.body, 'image');
@@ -185,6 +186,7 @@ router.post('/v1/pic', function(req, res, next) {
 	});
 });
 
+//	only accept base64 file
 router.post('/v1/video', function(req, res, next) {
 	// console.log(req.body);
 	sh.storeProcess(req.body, 'video');

@@ -101,7 +101,7 @@ class appHelper {
                     DBConn.count('taskpool', {type: 'image'}),
                     DBConn.count('taskpool', {type: 'video'}),
                     DBConn.count('illegal'),
-                    DBConn.count('illegal', {type: 'image'}),
+                    DBConn.count('illegal', {$and:[{type: 'image'},{$or:[{"rets.scenes.pulp.suggestion":"block"},{"rets.scenes.politician.suggestion":{$ne:"pass"}},{"rets.scenes.terror.suggestion":"block"}]}]}),
                     DBConn.count('illegal', {type: 'video'})
                 ];
                 Promise.all(p).then(res => {
