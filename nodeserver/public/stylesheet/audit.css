@@ -21,6 +21,7 @@ section > div {
 }
 #wa_list_filter_bar > div.noflex {
   display: block;
+  padding: 1rem 0;
 }
 #wa_list_filter_bar > div.inline-block {
   justify-content: flex-start;

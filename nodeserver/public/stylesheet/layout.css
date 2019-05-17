@@ -20,10 +20,11 @@ header div:first-child img {
 header div:first-child p {
   margin-left: 5vw;
   font-size: 2rem;
+  color: #555;
 }
 header div#navbar {
   justify-content: flex-start;
-  background: #add2df;
+  background: #d2cbe4;
   font-size: 1.2rem;
   height: 30%;
   padding-left: 2rem;
@@ -32,16 +33,16 @@ header div#navbar a {
   color: #777;
   text-decoration: none;
   padding: .5rem 1.2rem;
-  color: #00a7de;
+  color: #46278b;
   width: 10rem;
   text-align: center;
 }
 header div#navbar a.wa-home-nav-selected {
-  background: #00a7de;
+  background: #46278b;
   color: white;
 }
 header div#navbar a:hover {
-  background: #51b9db;
+  background: #46278bb3;
   color: white;
 }
 section {

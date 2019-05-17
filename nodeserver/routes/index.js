@@ -10,6 +10,12 @@ let sh			= new storeHelper();
 let dh			= new deliverHelper();
 let ah			= new appHelper();
 const upload	= multer({ dest: config.UPLOAD_PATH });
+let COUNT		= 0;
+
+ah.getStatistic('count').then(res => {
+	COUNT = res;
+	console.log("Count: ", COUNT);
+})
 
 log4js.configure({
 	appenders: { info: { type: 'file', filename: 'index.log' } },
@@ -44,7 +50,8 @@ router.get('/systemstatus', function(req, res, next) {
 	ah.getSystemStatus().then(data => {
 		res.send({
 			code: 200,
-			data: data
+			data: data,
+			count: COUNT
 		});
 	}).catch(err => {res.send({code:500, err: err})});
 });
@@ -121,28 +128,8 @@ router.post('/getillegaldata', function(req, res, next) {
 		]
 	}
 
-	let classes = req.body.classifyOption;
-	if(classes.length > 0) {
-		let ops = [];
-		classes.map(op => {
-			switch(op) {
-				case 'pulp':
-					ops.push({'rets.scenes.pulp.suggestion': 'block'});break;
-				case 'terror':
-					ops.push({'rets.scenes.terror.suggestion': 'block'});break;
-				case 'politician':
-					ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});break;
-				default:
-					break;
-			}
-		});
-		conditions.$and.push({$or: ops});
-	} else {
-		let ops = [];
-		ops.push({'rets.scenes.pulp.suggestion': 'block'});
-		ops.push({'rets.scenes.terror.suggestion': 'block'});
-		ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});
-		conditions.$and.push({$or: ops});
+	if(req.body.detectOption.length > 0) {
+		conditions['$and'].push({'rets.classes': {$in: req.body.detectOption}});
 	}
 	
 	console.log('conditions: ', JSON.stringify(conditions));
@@ -179,28 +166,46 @@ router.post('/getfilemeta', function(req, res, next) {
 //	only accept base64 file
 router.post('/v1/pic', function(req, res, next) {
 	// console.log(req.body);
-	sh.storeProcess(req.body, 'image');
-	res.send({
-		code: 200,
-		msg: 'task accepted'
-	});
+	if(Math.random() < 1){//0.25) {
+		sh.storeProcess(req.body, 'image');
+		COUNT++;
+		ah.updateStatistic('count', COUNT);
+		res.send({
+			code: 200,
+			msg: 'task accepted'
+		});
+	} else {
+		res.send({
+			code: 200,
+			msg: 'task abandoned'
+		});
+	}
 });
 
 //	only accept base64 file
 router.post('/v1/video', function(req, res, next) {
 	// console.log(req.body);
-	sh.storeProcess(req.body, 'video');
-	res.send({
-		code: 200,
-		msg: 'task accepted'
-	});
+	if(Math.random() < 0.25) {
+		sh.storeProcess(req.body, 'video');
+		res.send({
+			code: 200,
+			msg: 'task accepted'
+		});
+	} else {
+		res.send({
+			code: 200,
+			msg: 'task abandoned'
+		});
+	}
 });
 
 //	trigger audit process
 router.get('/trigger', function(req, res, next) {
-	dh.starter = true;
-	dh.processBatchImg();
-	dh.processBatchVideo();
+	if(!dh.starter) {
+		dh.starter = true;
+		dh.processBatchImg();
+		// dh.processBatchVideo();
+	}
 	res.send({
 		code: 200,
 		msg: 'audit task triggered'

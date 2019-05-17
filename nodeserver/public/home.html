@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <base target="_blank" />
-    <title>七牛Atlab-现场分析系统</title>
+    <title>闪马现场分析系统</title>
     <link rel="stylesheet" href="./stylesheet/common.css">
     <link rel="stylesheet" href="./stylesheet/layout.css">
     <link rel="stylesheet" href="./stylesheet/home.css">
@@ -13,13 +13,16 @@
 <body>
     <header>
         <div>
-            <img src="/imgs/qiniulogo.png" alt="">
-            <p>七牛Atlab-现场分析系统</p>
+            <img src="/imgs/logo.png" alt="">
+            <p>现场分析系统</p>
         </div>
         <div id="navbar"></div>
     </header>
     
     <section>
+        <div>
+            当前请求量：<span id="wxb_home_count">xxx</span>
+        </div>
         <div>
             <button id="wxb_home_starter" class='btn-success' onclick="startAudit()">开始过滤</button>
             <button id="wxb_home_stopper" class='btn-danger' onclick="stopAudit()">停止过滤</button>
@@ -32,11 +35,23 @@
                 <div id="wxb_home_taskinfo"></div>
             </div>
         </div>
+        <div>
+            <table id="wxb_home_table_left">
+                <tr><th>待处理-视频</th><td></td></tr>
+                <tr><th>待处理-图片</th><td></td></tr>
+                <tr><th>待处理-总量</th><td></td></tr>
+            </table>
+            <table id="wxb_home_table_right">
+                <tr><th>待审核图片</th><td></td></tr>
+                <tr><th>人审违规图片</th><td></td></tr>
+                <tr><th>机审违规总量</th><td></td></tr>
+            </table>
+        </div>
     </section>
 
 
     <footer>
-        <p>@copy right reserved by Qiniu</p>
+        <p>@copy right reserved by Supremind</p>
     </footer>
 
     <div id="wxb_list_modal_detail_trace" class="component-hidden">

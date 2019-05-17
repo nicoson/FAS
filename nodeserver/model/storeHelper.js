@@ -12,6 +12,7 @@ class storeHelper {
     init() {
         DBConn.createTable('taskpool', ['uid']).then(e => console.log(e));
         DBConn.createTable('illegal', ['uid']).then(e => console.log(e));
+        DBConn.createTable('statistic').then(e => console.log(e));
     }
 
     // get tasks in queue
@@ -22,14 +23,17 @@ class storeHelper {
         let filename = timestamp.getTime();
        
         //  step 1: save file
-        this.saveFile(file.uri, filename);
+        this.saveFile(file.data.uri, filename);
 
         //  step 2: generate data bodylet timestamp = (new Date()).getTime();
         let data = {
             uid: filename,
-            name: file.meta.pic_name,
+            // name: file.meta.pic_name,
             type: type,
             uri: `${config.FILESERVER}/${filename}`,
+            info: {
+                id: file.params.id
+            },
             create: timestamp,
             update: timestamp
         }

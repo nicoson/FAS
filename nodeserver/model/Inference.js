@@ -89,11 +89,8 @@ class InferenceHelper {
                             // "uri": datum.uri.replace('127.0.0.1','100.100.62.163')
                         },
                         "params": {
-                            "scenes": [
-                                "pulp",
-                                "terror",
-                                "politician"
-                            ]
+                            "detail": true,
+                            "type": "internet_terror"
                         }
                     });
                     p.push(this.censorCall(config.CENSORIMGAPI, reqBody));
@@ -102,7 +99,7 @@ class InferenceHelper {
                 Promise.all(p).then(res => {
                     console.log('censor Batch: ',res);
                     for(let i in res) {
-                        if(res[i].code == 200) {
+                        if(res[i].code == 0) {
                             // let result = this.resHandler(res[i]);
                             respond.push(res[i].result);
                         } else {

@@ -116,7 +116,8 @@ class deliverHelper {
                     uri: rawdata[ind].uri,
                     type: rawdata[ind].type,
                     rets: datum,
-                    filename: rawdata[ind].name,
+                    info: rawdata[ind].info,
+                    // filename: rawdata[ind].name,
                     manualreview: null,
                 });
             }
@@ -191,7 +192,7 @@ class deliverHelper {
         console.log('resData: ', resData);
         if(resData.code == 500) {
             console.log('call api failed, abort now ...');
-            return;
+            return {code: 500, msg: 'call api failed, abort now ...', status: 1};
         }
         
         //  step 3: insert data
@@ -297,8 +298,9 @@ class deliverHelper {
     }
 
     judgeIllegal(datum) {
-        //  illegal: true;  normal: false
-        return (Object.keys(datum).length > 0 && datum.suggestion == 'block');
+        // illegal: true;  normal: false
+        // console.log('XXXXX test XXXX:  ', Object.keys(datum).length, datum.label, datum)
+        return (Object.keys(datum).length > 0 && datum.label == 1);
     }
 
     processBatchImg(interval=200) {
@@ -309,7 +311,7 @@ class deliverHelper {
                     if(e.status == 1) {
                         this.processBatchImg();
                     } else {
-                        console.log('processBatchImg: no data waiting ...');
+                        console.log('processBatchImg: no data, waiting ...');
                         this.processBatchImg(10000);
                     }
                 });

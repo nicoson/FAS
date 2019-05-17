@@ -1,5 +1,5 @@
 section {
-  background: #0f3f5c;
+  background: #38285d;
   color: white;
 }
 section > div {
@@ -13,6 +13,14 @@ section > div:first-child {
 }
 section > div:first-child button {
   margin: 2rem;
+}
+section > div table {
+  border-collapse: collapse;
+}
+section > div table td,
+section > div table th {
+  border: 1px solid white;
+  padding: .5rem 1rem;
 }
 #wxb_home_leftpanel {
   width: 30vw;

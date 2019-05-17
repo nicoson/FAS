@@ -12,8 +12,16 @@ function getList() {
             let data = res.data;
             // fillStatic(data);
             let taskpooldata = [data.taskpoolnum, data.taskpoolimagenum, data.taskpoolvideonum];
-            let fileinfodata = [data.fileinfonum, data.fileinfoimagenum, data.fileinfovideonum];
+            let fileinfodata = [data.fileinfoimagenum, data.illegalimage, data.waitimage];
             drawCharts(taskpooldata,fileinfodata);
+            document.querySelector('#wxb_home_count').innerHTML = res.count;
+
+            document.querySelector('#wxb_home_table_left tr:nth-of-type(1) td').innerHTML = data.taskpoolvideonum;
+            document.querySelector('#wxb_home_table_left tr:nth-of-type(2) td').innerHTML = data.taskpoolimagenum;
+            document.querySelector('#wxb_home_table_left tr:nth-of-type(3) td').innerHTML = data.taskpoolnum;
+            document.querySelector('#wxb_home_table_right tr:nth-of-type(1) td').innerHTML = data.waitimage;
+            document.querySelector('#wxb_home_table_right tr:nth-of-type(2) td').innerHTML = data.illegalimage;
+            document.querySelector('#wxb_home_table_right tr:nth-of-type(3) td').innerHTML = data.fileinfoimagenum;
         }
     });
 }
@@ -32,7 +40,7 @@ function stopAudit() {
 
 function drawCharts(taskpooldata,fileinfodata) {
     let taskpoolchart = drawBar('wxb_home_taskpool','TaskPool',['待处理','待处理-图片','待处理-视频'],taskpooldata);
-    let fileinfochart = drawBar('wxb_home_taskinfo','Illegal',['违规总量', '违规图片', '违规视频'],fileinfodata);
+    let fileinfochart = drawBar('wxb_home_taskinfo','Illegal',['机审违规总量', '人审违规图片', '待审图片'],fileinfodata);
 }
 
 function drawBar(ele,title,label,data) {

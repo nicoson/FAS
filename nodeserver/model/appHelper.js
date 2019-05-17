@@ -11,54 +11,6 @@ class appHelper {
 
     }
 
-    // // get files from <fileinfo> table
-    // async getDataFromFileInfo(conditions={}, size=50, skip=0) {
-    //     console.log('|** appHelper.getDataFromFileInfo **| INFO: get data from <fileinfo> table for list view| ', new Date());
-    //     let res = await DBConn.queryData('fileinfo', conditions, size, skip).catch(err => {console.log(err); return []});
-    //     return res;
-    // }
-
-    // // get infos from <filemeta> table
-    // async getDataFromFileMeta(conditions={}, size=999999) {
-    //     console.log('|** appHelper.getDataFromFileMeta **| INFO: get data from <filemeta> table for detail view| ', new Date());
-    //     let res = await DBConn.queryData('filemeta', conditions, size).catch(err => {console.log(err); return []});
-    //     return res;
-    // }
-
-    // // update data into <fileinfo> table
-    // async updateDataIntoFileInfo(data) {
-    //     console.log('|** appHelper.updateDataIntoFileInfo **| INFO: update data into <fileinfo> table| ', new Date());
-    //     if(data.length == 0) return 0;
-        
-    //     let timestamp = (new Date()).getTime();
-    //     let deleteOperations = [];
-    //     let operations = data.map(datum => {
-    //         if(datum.manualreview == false) {
-    //             deleteOperations.push({
-    //                 deleteMany: {
-    //                     filter: {md5: datum.md5}
-    //                 }
-    //             });
-    //         }    
-    //         return {
-    //             updateOne: {
-    //                 filter: {md5: datum.md5},
-    //                 update: {$set: {
-    //                     manualreview: datum.manualreview,
-    //                     update: timestamp
-    //                 }}
-    //             }
-    //         };
-    //     });
-
-    //     // console.log(JSON.stringify(operations));
-    //     let res = await DBConn.updateData('fileinfo', operations).catch(err => {console.log(err); return err});
-    //     if(deleteOperations.length > 0) {
-    //         res = await DBConn.updateData('filemeta', deleteOperations).catch(err => {console.log(err); return err});
-    //     }
-    //     return res;
-    // }
-
     // get files from <videos> table
     async getDataFromDB(conditions={}, size=50, skip=0) {
         console.log('|** appHelper.getDataFromDB **| INFO: get data from <videos> table for list view| ', new Date());
@@ -90,6 +42,7 @@ class appHelper {
 
         console.log(JSON.stringify(operations));
         let res = await DBConn.updateData(table, operations).catch(err => {console.log(err); return err});
+        console.log('db operation result: ', res)
         return res;
     }
 
@@ -101,8 +54,12 @@ class appHelper {
                     DBConn.count('taskpool', {type: 'image'}),
                     DBConn.count('taskpool', {type: 'video'}),
                     DBConn.count('illegal'),
-                    DBConn.count('illegal', {$and:[{type: 'image'},{$or:[{"rets.scenes.pulp.suggestion":"block"},{"rets.scenes.politician.suggestion":{$ne:"pass"}},{"rets.scenes.terror.suggestion":"block"}]}]}),
-                    DBConn.count('illegal', {type: 'video'})
+                    DBConn.count('illegal', {type: 'image'}),
+                    DBConn.count('illegal', {type: 'video'}),
+                    DBConn.count('illegal', {$and:[{type: 'image'}, {manualreview: true}]}),
+                    DBConn.count('illegal', {$and:[{type: 'video'}, {manualreview: true}]}),
+                    DBConn.count('illegal', {$and:[{type: 'image'}, {manualreview: null}]}),
+                    DBConn.count('illegal', {$and:[{type: 'video'}, {manualreview: null}]})
                 ];
                 Promise.all(p).then(res => {
                     resolve({
@@ -111,7 +68,11 @@ class appHelper {
                         taskpoolvideonum: res[2],
                         fileinfonum: res[3],
                         fileinfoimagenum: res[4],
-                        fileinfovideonum: res[5]
+                        fileinfovideonum: res[5],
+                        illegalimage: res[6],
+                        illegalvideo: res[7],
+                        waitimage: res[8],
+                        waitvideo: res[9]
                     });
                 }).catch(err => reject(err));
             });
@@ -119,6 +80,27 @@ class appHelper {
         catch(err) {
             reject(err);
         }
+    }
+
+    async getStatistic(key) {
+        let res = await DBConn.queryData('statistic', {name: key}, 1, 0);
+        console.log("res: ", res);
+        return res.length == 0 ? 0 : res[0].number;
+    }
+
+    updateStatistic(key, data) {
+        let operations = [{
+            updateOne: {
+                filter: {name: key},
+                update: {$set: {
+                    number: data,
+                    update: new Date()
+                }},
+                upsert: true
+            }
+        }];
+        DBConn.updateData('statistic', operations);
+        return 'done';
     }
 }
 

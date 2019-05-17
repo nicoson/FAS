@@ -1,6 +1,6 @@
 {
   "name": "nodeserver",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "export PORT=3333; node ./bin/www",

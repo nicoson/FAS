@@ -2,10 +2,15 @@ APIHOST = (typeof(APIHOST) == 'undefined') ? '' : APIHOST;
 let DATA = [];
 let CLASSOPTION = new Set();
 let DETECTOPTION = new Set();
+let OPTIONS = '';
 let ITEMS = {};
 let PAGENUM = 0;
 let PAGESIZE = 10;
 let isScroll = true;    //  控制下拉加载
+
+let SETTINGS = localStorage.settings ? JSON.parse(localStorage.settings) : {size:30,defaultClass:'normal',font:3,classoption:[],detectoption:[],filetype:'image'};
+SETTINGS.filetype = (typeof(SETTINGS.filetype) != 'undefined') ? SETTINGS.filetype : 'image';
+SETTINGS.detectoption.map(item => DETECTOPTION.add(item));
 
 window.onload = function() {
     setTimeout(init, 1);
@@ -18,8 +23,8 @@ function init() {
     startDate = getDateString(new Date(startDate.setDate(startDate.getDate() - range)));
     document.querySelector('#wa_list_table_datefrom').value = startDate;
     document.querySelector('#wa_list_table_dateto').value = endDate;
-    getTableList(false);
     getFilterItem();
+    setTimeout(getTableList(false),500);
 }
 
 function getFilterItem() {
@@ -33,11 +38,11 @@ function getFilterItem() {
             sceneTemp += `<div><label for="wa_list_scene_option_${item}"><input id="wa_list_scene_option_${item}" type="checkbox" data-option="${item}" onchange="sceneOptionChange(event)" />${data.classItem[item]}</label></div>`
         }
         for(let item in data.detectItem) {
-            objectTemp += `<div><label for="wa_list_object_option_${item}"><input id="wa_list_object_option_${item}" type="checkbox" data-option="${item}" onchange="objectOptionChange(event)" />${data.detectItem[item]}</label></div>`
+            objectTemp += `<div><label for="wa_list_object_option_${item}"><input id="wa_list_object_option_${item}" type="checkbox" data-option="${item}" onchange="objectOptionChange(event)" ${DETECTOPTION.has(item) ? "checked" : ""} />${data.detectItem[item]}</label></div>`
         };
         ITEMS = Object.assign(data.classItem, data.detectItem);
-        document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
-        // document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
+        // document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
+        document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
     });
 }
 
@@ -115,9 +120,9 @@ function fillListTable(ele, data, isAppend=false) {
                                     <th>查处日期</th>
                                     <th>文件</th>
                                     <th>文件类型</th>
-                                    <th>来源</th>
                                     <th>涉嫌违规场景</th>
-                                    <th>IP端口</th>
+                                    <th>追踪号</th>
+                                    <th>操作</th>
                                 </tr>`;
     for(let i in data) {
         // if()
@@ -129,9 +134,9 @@ function fillListTable(ele, data, isAppend=false) {
                         <${(data[i].type=='image')?'img':'video'} src="${data[i].uri.replace('http://127.0.0.1:3333', FILEHOST)}" controls="controls">
                     </td>
                     <td>${fileTypeMap(data[i].type)}</td>
-                    <td>${'xxx'}</td>
-                    <td>${fileType(data[i])}</td>
-                    <td>${'xxx.xxx.xxx.xxx'}</td>
+                    <td>${illegalMap(data[i].rets.classes)}</td>
+                    <td>${data[i].info.id}</td>
+                    <td><button class="btn-danger" onclick="hideItem(event)" data-uid="${data[i].uid}">隐藏</button></td>
                 </tr>
                 <tr class="component-hidden"></tr>`;
     }
@@ -224,10 +229,30 @@ function objectOptionChange(event) {
     } else {
         DETECTOPTION.delete(event.target.dataset['option']);
     }
+    SETTINGS.detectoption = [...DETECTOPTION];
+    localStorage.settings = JSON.stringify(SETTINGS);
 }
 
 function showContent(event) {
     event.stopPropagation();
+}
+
+function hideItem(event) {
+    let url = APIHOST + '/submitauditdata';
+    postBody.body = JSON.stringify({
+        data: [{
+            uid: parseInt(event.target.dataset['uid']),
+            manualreview: false
+        }]
+    });
+    toggleLoadingModal();
+    fetch(url, postBody).then(e => e.json()).then(data => {
+        console.log(data);
+        if(data.code == 200) {
+            getTableList();
+        }
+        toggleLoadingModal();
+    });
 }
 
 function fileTypeMap(type) {
@@ -279,4 +304,10 @@ function fileType(datum) {
     if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
     if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
     return res.join(',');
+}
+
+function illegalMap(data) {
+    return data.map(datum => {
+        return OPTIONS.detectItem[datum];
+    });
 }

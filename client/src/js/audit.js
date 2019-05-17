@@ -39,8 +39,8 @@ function getFilterItem() {
         //     objectTemp += `<div><label for="wa_list_object_option_${item}"><input id="wa_list_object_option_${item}" type="checkbox" data-option="${item}" onchange="objectOptionChange(event)" ${DETECTOPTION.has(item) ? 'checked':''} />${data.detectItem[item]}</label></div>`
         // };
         ITEMS = Object.assign(data.classItem, data.detectItem);
-        document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
-        document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
+        // document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
+        // document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
     });
 }
 
@@ -82,8 +82,8 @@ function setSettingBar() {
 function fillCardList(data) {
     let tmp = '';
     data.map((datum, ind) => {
-        if(datum.rets.suggestion == "error inference") return;
-        if(typeof(datum.rets.suggestion) == "undefined") return;
+        // if(datum.rets.suggestion == "error inference") return;
+        // if(typeof(datum.rets.suggestion) == "undefined") return;
 
         let thumb = '';
         if(datum.type == 'image') {
@@ -111,7 +111,7 @@ function fillCardList(data) {
                             </tr>
                             <tr>
                                 <td>违规场景：</td>
-                                <td>${illegalType(datum)}</td>
+                                <td>${illegalMap(datum.rets.classes)}</td>
                             </tr>
                         </table>
                     </div>
@@ -252,4 +252,10 @@ function illegalType(datum) {
     if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
     if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
     return res.join(',');
+}
+
+function illegalMap(data) {
+    return data.map(datum => {
+        return OPTIONS.detectItem[datum];
+    });
 }

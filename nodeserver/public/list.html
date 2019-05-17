@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>七牛Atlab-现场分析系统</title>
+    <title>闪马现场分析系统</title>
     <link rel="stylesheet" href="./stylesheet/common.css">
     <link rel="stylesheet" href="./stylesheet/layout.css">
     <link rel="stylesheet" href="./stylesheet/list.css">
@@ -12,8 +12,8 @@
 <body>
     <header>
         <div>
-            <img src="/imgs/qiniulogo.png" alt="">
-            <p>七牛Atlab-现场分析系统</p>
+            <img src="/imgs/logo.png" alt="">
+            <p>现场分析系统</p>
         </div>
         <div id="navbar"></div>
     </header>
@@ -24,15 +24,15 @@
                 开始日期 <input id="wa_list_table_datefrom" type="date" /> 
                 截止日期 <input id="wa_list_table_dateto" type="date" />
                 <!-- md5搜索 <input id="wa_list_table_filter_md5" type="search" /> -->
-                <label for="wa_list_table_filter_type_image"><input id="wa_list_table_filter_type_image" name="wa_list_table_filter_type" type="radio" data-value="image" />图片</label>
-                <label for="wa_list_table_filter_type_video"><input id="wa_list_table_filter_type_video" name="wa_list_table_filter_type" type="radio" data-value="video" checked />视频</label>
-            </div>
-            <div>
-                <div>违规场景：</div><div id="wa_list_scene_option_container"><label for="wa_list_scene_option_1"><input id="wa_list_scene_option_1" type="checkbox" />非法</label></div>
+                <label for="wa_list_table_filter_type_image"><input id="wa_list_table_filter_type_image" name="wa_list_table_filter_type" type="radio" data-value="image" checked />图片</label>
+                <label for="wa_list_table_filter_type_video"><input id="wa_list_table_filter_type_video" name="wa_list_table_filter_type" type="radio" data-value="video" />视频</label>
             </div>
             <!-- <div>
-                <div>涉嫌物品：</div><div id="wa_list_object_option_container"><label for="wa_list_object_option_1"><input id="wa_list_object_option_1" type="checkbox" />非法</label></div>
+                <div>违规场景：</div><div id="wa_list_scene_option_container"><label for="wa_list_scene_option_1"><input id="wa_list_scene_option_1" type="checkbox" />非法</label></div>
             </div> -->
+            <div>
+                <div>违规场景：</div><div id="wa_list_object_option_container"><label for="wa_list_object_option_1"><input id="wa_list_object_option_1" type="checkbox" />非法</label></div>
+            </div>
             <button id="wa_list_filter_submit" class="btn-success" onclick="reloadData()">获取数据</button>
         </div>
         
@@ -55,7 +55,7 @@
     </section>
 
     <footer>
-        <p>@copy right reserved by Qiniu</p>
+        <p>@copy right reserved by Supremind</p>
     </footer>
 
     <div class="wa-modal-loading component-hidden">
