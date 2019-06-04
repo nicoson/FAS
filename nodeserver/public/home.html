@@ -21,7 +21,14 @@
     
     <section>
         <div>
-            当前请求量：<span id="wxb_home_count">xxx</span>
+            <table>
+                <tr>
+                    <td>当前请求总量：<span id="wxb_home_count">xxx</span></td>
+                    <td>近阶段无效数据量：<span id="wxb_home_badcall">xxx</span></td>
+                    <td>近阶段正常数据量：<span id="wxb_home_legal">xxx</span></td>
+                    <td>近阶段违规数据量：<span id="wxb_home_illegal">xxx</span></td>
+                </tr>
+            </table>
         </div>
         <div>
             <button id="wxb_home_starter" class='btn-success' onclick="startAudit()">开始过滤</button>

@@ -58,7 +58,7 @@ class InferenceHelper {
             //     });
             //     return;
             // }
-            console.log('============> get: ', reqBody);
+            console.info('|** InferenceHelper.censorCall **| INFO: ', reqBody);
             fetch(api, this.options).then(e => e.json()).then(data => {
                 if(data.error == undefined) {
                     resolve(data);

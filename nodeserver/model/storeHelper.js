@@ -1,7 +1,9 @@
 const fs		= require('fs');
-const DBConn    = require('./DBConnection');
+const DBConnection    = require('./DBConnection');
 const config    = require('./config');
 const savepath  = config.UPLOAD_PATH;
+
+let DBConn = new DBConnection();
 
 // use UTC time zone
 class storeHelper {

@@ -87,17 +87,15 @@ function fillCardList(data) {
 
         let thumb = '';
         if(datum.type == 'image') {
-            thumb = '<img src="' + datum.uri.replace('http://127.0.0.1:3333', FILEHOST) + '" alt="">';
+            thumb = '<img src="' + datum.uri.replace('http://127.0.0.1:3333', FILEHOST) + '" onclick="showContent(event)" alt="">';
         } else if(datum.type == 'video') {
-            thumb = '<video src="' + datum.uri.replace('http://127.0.0.1:3333', FILEHOST) + '"  controls="controls">';
+            thumb = '<video src="' + datum.uri.replace('http://127.0.0.1:3333', FILEHOST) + '" onclick="showContent(event)"  controls="controls">';
         } else {
             thumb = '<img src="' + datum.message.cover + '" alt="">';
         }
         tmp += `<div class="wa-list-card ${SETTINGS.defaultClass == 'normal' ? '':'wa-list-card-abnormal'}" onclick="toggleClass(event)" data-index=${ind}>
                     <div class="wa-list-card-frame wa-list-card-frame-size-${SETTINGS.font}">
-                        <a href="${datum.uri.replace('http://127.0.0.1:3333', FILEHOST)}" onclick="showContent(event)" target="_blank">
-                            ${thumb}
-                        </a>
+                        ${thumb}
                     </div>
                     <div class="wa-list-card-result">
                         <table>
@@ -232,6 +230,9 @@ function objectOptionChange(event) {
 
 function showContent(event) {
     event.stopPropagation();
+    let tmp = `<${event.target.nodeName} src="${event.target.src}" />`;
+    document.querySelector('.wa-modal-openfile div').innerHTML = tmp;
+    document.querySelector('.wa-modal-openfile').classList.toggle('component-hidden');
 }
 
 function fileTypeMap(type) {

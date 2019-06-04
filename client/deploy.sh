@@ -2,3 +2,4 @@
 
 cp -r ./dev/ ../nodeserver/public/
 cp ./dev/index.html ../nodeserver/views/index.ejs
+cp -rf ./imgs/ ../nodeserver/public/imgs/

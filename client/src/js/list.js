@@ -48,6 +48,7 @@ function getFilterItem() {
 
 function getTableList(isAppend = false) {
     toggleLoadingModal();
+    if(!isAppend) PAGENUM = 0;
     requestIllegalData().then(res => {
         if(res.code == 200) {
             let ele = document.querySelector('#wa_list_table');
@@ -131,7 +132,7 @@ function fillListTable(ele, data, isAppend=false) {
                     <td>${PAGENUM*PAGESIZE + Number(i) + 1}</td>
                     <td>${new Date(data[i].create).toLocaleDateString()}</td>
                     <td>
-                        <${(data[i].type=='image')?'img':'video'} src="${data[i].uri.replace('http://127.0.0.1:3333', FILEHOST)}" controls="controls">
+                        <${(data[i].type=='image')?'img':'video'} src="${data[i].uri.replace('http://127.0.0.1:3333', FILEHOST)}" onclick="showContent(event)" controls="controls">
                     </td>
                     <td>${fileTypeMap(data[i].type)}</td>
                     <td>${illegalMap(data[i].rets.classes)}</td>
@@ -233,10 +234,6 @@ function objectOptionChange(event) {
     localStorage.settings = JSON.stringify(SETTINGS);
 }
 
-function showContent(event) {
-    event.stopPropagation();
-}
-
 function hideItem(event) {
     let url = APIHOST + '/submitauditdata';
     postBody.body = JSON.stringify({
@@ -310,4 +307,11 @@ function illegalMap(data) {
     return data.map(datum => {
         return OPTIONS.detectItem[datum];
     });
+}
+
+function showContent(event) {
+    event.stopPropagation();
+    let tmp = `<${event.target.nodeName} src="${event.target.src}" />`;
+    document.querySelector('.wa-modal-openfile div').innerHTML = tmp;
+    document.querySelector('.wa-modal-openfile').classList.toggle('component-hidden');
 }

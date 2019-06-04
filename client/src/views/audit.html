@@ -24,7 +24,7 @@
             <div id="wa_list_filter_bar">
                 <div>
                     <div>
-                        每次获取<input id="wa_list_setting_size" type="number" value="30"/>条
+                        每次获取<input id="wa_list_setting_size" type="number" value="30" max=200 min=1 />条(最多200条/次)
                     </div>
                     <div>
                         默认设置为：<input id="wa_list_setting_defaultclass_normal" name="defaultclass" type="radio" checked /><label for="wa_list_setting_defaultclass_normal">正常</label> 
@@ -73,6 +73,10 @@
 
     <div class="wa-modal-loading component-hidden">
         <img src="/imgs/loading.png" alt="">
+    </div>
+
+    <div class="wa-modal-openfile component-hidden" onclick="closeModal(event)">
+        <div></div>
     </div>
 
     <script src="./javascript/config.js"></script>

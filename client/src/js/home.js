@@ -4,6 +4,7 @@ let IND = null;
 
 window.onload = function() {
     getList();
+    setInterval(getStatistics,1000);
 }
 
 function getList() {
@@ -27,14 +28,24 @@ function getList() {
 }
 
 function startAudit() {
+    console.info('recorder - start time: ', new Date().getTime());
     fetch(APIHOST + '/trigger').then(e => {
         alert('过滤服务已开启 ...');
     });
 }
 
 function stopAudit() {
+    console.info('recorder - stop time: ', new Date().getTime());
     fetch(APIHOST + '/stopper').then(e => {
         alert('过滤服务已停止 ...');
+    });
+}
+
+function getStatistics() {
+    fetch(APIHOST + '/home/jobstatistic').then(e => e.json()).then(e => {
+        document.querySelector('#wxb_home_badcall').innerHTML = e.data.badcall;
+        document.querySelector('#wxb_home_legal').innerHTML = e.data.legal;
+        document.querySelector('#wxb_home_illegal').innerHTML = e.data.illegal;
     });
 }
 

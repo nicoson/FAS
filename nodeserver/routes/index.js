@@ -7,9 +7,10 @@ const storeHelper	= require('../model/storeHelper');
 const deliverHelper = require('../model/deliverHelper');
 const appHelper = require('../model/appHelper');
 let sh			= new storeHelper();
-let dh			= new deliverHelper();
+let dh_img		= new deliverHelper(60, 500, 'image');
+let dh_video	= new deliverHelper(5, 20, 'video');
 let ah			= new appHelper();
-const upload	= multer({ dest: config.UPLOAD_PATH });
+// const upload	= multer({ dest: config.UPLOAD_PATH });
 let COUNT		= 0;
 
 ah.getStatistic('count').then(res => {
@@ -64,47 +65,10 @@ router.get('/getillegalclass', function(req, res, next) {
 });
 
 router.post('/rawdata', function(req, res, next) {
-	let size = req.body.size;
-
-	let conditions = {
-		$and: [
-			{manualreview: null},
-			{type: req.body.mimeType}
-		]
-	}
-	let classes = req.body.classifyOption;
-	if(classes.length > 0) {
-		let ops = [];
-		classes.map(op => {
-			switch(op) {
-				case 'pulp':
-					ops.push({'rets.scenes.pulp.suggestion': 'block'});break;
-				case 'terror':
-					ops.push({'rets.scenes.terror.suggestion': 'block'});break;
-				case 'politician':
-					ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});break;
-				default:
-					break;
-			}
-		});
-		conditions.$and.push({$or: ops});
-	} else {
-		let ops = [];
-		ops.push({'rets.scenes.pulp.suggestion': 'block'});
-		ops.push({'rets.scenes.terror.suggestion': 'block'});
-		ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});
-		conditions.$and.push({$or: ops});
-	}
-	
-	console.log('conditions: ', JSON.stringify(conditions));
-
-	ah.getDataFromDB(conditions, size).then(data => {
-		res.send({
-			code: 200,
-			data: data.res,
-			num: data.num
-		});
-	}).catch(err => {res.send({code:500, err: err})});
+	// console.log(`......method: ${req.method}`);
+	ah.getRawData(req).then(data => {
+		res.send(data);
+	});
 });
 
 router.post('/submitauditdata', function(req, res, next) {
@@ -166,7 +130,7 @@ router.post('/getfilemeta', function(req, res, next) {
 //	only accept base64 file
 router.post('/v1/pic', function(req, res, next) {
 	// console.log(req.body);
-	if(Math.random() < 1){//0.25) {
+	if(Math.random() < 1){//0.7) {
 		sh.storeProcess(req.body, 'image');
 		COUNT++;
 		ah.updateStatistic('count', COUNT);
@@ -184,8 +148,7 @@ router.post('/v1/pic', function(req, res, next) {
 
 //	only accept base64 file
 router.post('/v1/video', function(req, res, next) {
-	// console.log(req.body);
-	if(Math.random() < 0.25) {
+	if(Math.random() < 0.30) {
 		sh.storeProcess(req.body, 'video');
 		res.send({
 			code: 200,
@@ -201,11 +164,8 @@ router.post('/v1/video', function(req, res, next) {
 
 //	trigger audit process
 router.get('/trigger', function(req, res, next) {
-	if(!dh.starter) {
-		dh.starter = true;
-		dh.processBatchImg();
-		// dh.processBatchVideo();
-	}
+	dh_img.auditImgStart();
+	// dh_video.auditImgStart();
 	res.send({
 		code: 200,
 		msg: 'audit task triggered'
@@ -213,11 +173,19 @@ router.get('/trigger', function(req, res, next) {
 });
 
 router.get('/stopper', function(req, res, next) {
-	dh.starter = false;
+	dh_img.auditImgStop();
+	// dh_video.auditImgStop();
 	res.send({
 		code: 200,
 		msg: 'audit task stopped'
 	});
+});
+
+router.get('/home/jobstatistic', function(req, res, next) {
+	res.send({
+		code: 200,
+		data: dh_img.getStatistics()
+	})
 });
 
 module.exports = router;

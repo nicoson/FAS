@@ -1,7 +1,8 @@
-const DBConn = require('./DBConnection');
+const DBConnection = require('./DBConnection');
 const fusionDBConn = require('./fusionDBConn');
 const ObjectId = require('mongodb').ObjectId
 
+let DBConn = new DBConnection();
 
 class mockHelper {
     constructor() {

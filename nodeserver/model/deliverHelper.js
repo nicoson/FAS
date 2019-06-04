@@ -1,20 +1,18 @@
 const fs		        = require('fs');
-const DBConn            = require('./DBConnection');
+const DBConnection      = require('./DBConnection');
+const CONCURRENT        = require('./concurrent');
 const InferenceHelper   = require('./Inference');
 const config            = require('./config');
+const appHelper         = require('../model/appHelper');
 const savepath          = config.UPLOAD_PATH;
 
-let iHelp = new InferenceHelper(false);
+let iHelp   = new InferenceHelper(false);
+let DBConn  = new DBConnection();
+let ah      = new appHelper();
 
-// use UTC time zone
-class deliverHelper {
-    constructor() {
-        this.init();
-    }
 
-    init() {
-        this.starter = false;
-    }
+class fileHandler {
+    constructor() {}
 
     // get tasks in queue
     queryTasks(size, type='image') {
@@ -123,7 +121,7 @@ class deliverHelper {
             }
         });
 
-        console.log('infoData: ',infoData);
+        // console.log('infoData: ',infoData);
 
         return new Promise(function(resolve, reject) {
             if(infoData.length == 0) {
@@ -167,83 +165,84 @@ class deliverHelper {
         });
     }
 
-    //  status:
-    //      0: task pool empty
-    //      1: task pool not empty
-    async atomProcess(size=20) {
-        //  step 1: query data
-        let queueData = await this.queryTasks(size);
-        if(queueData.code == 500) {
-            console.log('get task failed, try again later ...');
-            setTimeout(() => this.atomProcess(), 2000);
-            return {code: 500, msg: 'get task failed', status: 1};
-        } else if(queueData.data.length == 0) {
-            console.log('task pool empty');
-            return {
-                code: 200,
-                length: queueData.data.length,
-                msg: 'task pool empty',
-                status: 0
-            };
-        }
+    judgeIllegal(datum) {
+        // illegal: true;  normal: false
+        // console.log('XXXXX test XXXX:  ', Object.keys(datum).length, datum.label, datum)
+        return (datum != null && Object.keys(datum).length > 0 && datum.label == 1);
+    }
+}
 
-        //  step 2: audit data
-        let resData = await iHelp.censorBatch(queueData.data).catch(err => {console.log('inference err: ', err); return;});
-        console.log('resData: ', resData);
-        if(resData.code == 500) {
-            console.log('call api failed, abort now ...');
-            return {code: 500, msg: 'call api failed, abort now ...', status: 1};
-        }
-        
-        //  step 3: insert data
-        let res = await this.insertIllegal(queueData.data, resData.data).catch(err => {console.log('insertIllegal err: ', err); return;});
-        if(res.code == 500) {
-            console.log('insert insertIllegal data failed, abort now ...');
-            return {code: 500, msg: 'insert insertIllegal data failed', status: 1};
-        }
-        console.log("============>  insert fileinfo");
-
-        //  step 4: delete task
-        res = await this.deleteTasks(queueData.data).catch(err => {console.log('deleteTasks err: ', err); return;});
-        if(res.code == 500) {
-            console.log('delete pooling data failed, abort now ...');
-            return {code: 500, msg: 'delete pooling data failed', status: 1};
-        }
-
-        //  step 5: delete file
-        res = await this.deleteFiles(queueData.data, resData.data).catch(err => {console.log('deleteFiles err: ', err); return;});
-        if(res.code == 500) {
-            console.log('delete file failed, abort now ...');
-            return {code: 500, msg: 'delete file failed', status: 1};
-        }
-
-        console.log(`|** deliverHelper.atomProcess **| INFO: ${queueData.data.length} data were handled ...`, new Date());
-        return {
-            code: 200,
-            length: queueData.data.length,
-            msg: `${queueData.data.length} data were handled ...`,
-            status: 1
-        };
+let fh = new fileHandler();
+class job {
+    constructor(preload=100, type='image') {
+        this.preload = preload;
+        this.data = [];
+        this.fetching = false;
+        this.type = type;
+        this.callJob = (type == 'image') ? this.callImageJob : this.callVideoJob;
+        this.staticstic = {badcall: 0, legal: 0, illegal: 0};
     }
 
-    async videoProcess(size=1) {
-        //  step 1: query task
-        let task = await this.queryTasks(size,'video');
-        if(task.code == 500) {
-            console.log('get video task failed, try again later ...');
-            setTimeout(() => this.videoProcess(), 1000);
-            return {code: 500, msg: 'get task failed', status: 1};
-        } else if(task.data.length == 0) {
-            console.log('video pool empty');
-            return {
-                code: 200,
-                length: task.data.length,
-                msg: 'video pool empty',
-                status: 0
-            };
-        }
+    start() {
+        this.starter = true;
+    }
 
-        //  step 2: audit task
+    stop() {
+        this.starter = false;
+    }
+
+    async getDatum() {
+        // 如果已经有其他 job 在请求数据了，那么等待
+        while(this.fetching) {
+            console.log('  ... waiting for fetching ...');
+            await this.sleep(1000);
+        }
+        if(this.data.length < 1) {
+            this.fetching = true;
+            while(this.fetching) {
+                this.data = (await fh.queryTasks(this.preload,this.type)).data;
+                // 如果取不到数据，那么等待多一会儿
+                if(this.data.length > 0) {
+                    this.fetching = false;
+                } else {
+                    await this.sleep(10000);
+                }
+            }
+            
+            // console.log('data: ',this.data);
+            console.log(`            ... fetch: ${this.data.length} jobs ...`);
+        }
+        return this.data.splice(0,1)[0];
+    }
+
+    async callImageJob(callBack) {
+        let datum = await this.getDatum();
+        let reqBody = JSON.stringify({
+            "data": {
+                "uri": datum.uri
+            },
+            "params": {
+                "detail": true,
+                "type": "internet_terror"
+            }
+        });
+        let res = await iHelp.censorCall(config.CENSORIMGAPI, reqBody).catch(err => console.log('image inference err: ', err));
+        // console.log('res: ', res);
+        if(res.code == 0) {
+            callBack({
+                source: datum,
+                res: res.result
+            });
+        } else {
+            callBack({
+                source: datum,
+                res: null
+            });
+        }
+    }
+
+    async callVideoJob(callBack) {
+        let datum = await this.getDatum();
         let reqBody = JSON.stringify({
             "data": {
                 "uri": task.data[0].uri
@@ -259,85 +258,99 @@ class deliverHelper {
                 }
             }
         });
-        let resData = await iHelp.censorCall(config.CENSORVIDEOAPI, reqBody).catch(err => {console.log('inference err: ', err); return;});
-        console.log('resData: ', resData);
-        if(typeof(resData.result) == 'undefined') {
-            console.log('call api failed, abort now ...');
-            return {code: 500, msg: 'audit video failed: ' + resData.err, status: 1};
+        let res = await iHelp.censorCall(config.CENSORVIDEOAPI, reqBody).catch(err => console.log('video inference err: ', err));
+        // console.log('res: ', res);
+        if(res.code == 0) {
+            callBack({
+                source: datum,
+                res: res.result
+            });
+        } else {
+            callBack({
+                source: datum,
+                res: null
+            });
         }
-
-        //  step 3: insert result
-        // resData.label = (resData.result.suggestion != 'block') ? 0 : 1;
-        let res = await this.insertIllegal(task.data, [resData.result]).catch(err => {console.log('insertFileInfo err: ', err); return;});
-        if(res.code == 500) {
-            console.log('insert fileinfo data failed, abort now ...');
-            return {code: 500, msg: 'insert fileinfo data failed', status: 1};
-        }
-        
-        //  step 4: delete task
-        res = await this.deleteTasks(task.data).catch(err => {console.log('deleteTasks err: ', err); return;});
-        if(res.code == 500) {
-            console.log('delete pooling data failed, abort now ...');
-            return {code: 500, msg: 'delete pooling data failed', status: 1};
-        }
-
-        //  step 5: delete file
-        res = await this.deleteFiles(task.data, [resData]).catch(err => {console.log('deleteTasks err: ', err); return;});
-        if(res.code == 500) {
-            console.log('delete file failed, abort now ...');
-            return {code: 500, msg: 'delete file failed', status: 1};
-        }
-
-        console.log(`|** deliverHelper.videoProcess **| INFO: ${task.data.length} data were handled ...`, new Date());
-        return {
-            code: 200,
-            length: task.data.length,
-            msg: `${task.data.length} data were handled ...`,
-            status: 1
-        };
     }
 
-    judgeIllegal(datum) {
-        // illegal: true;  normal: false
-        // console.log('XXXXX test XXXX:  ', Object.keys(datum).length, datum.label, datum)
-        return (Object.keys(datum).length > 0 && datum.label == 1);
-    }
+    async consume(data) {
+        let size = Math.min(100, Math.ceil(this.preload * 0.3));
+        if(data.length > size) {
+            let temp = data.splice(0, size);
+            let rawData = temp.map(datum => datum.source);
+            let resData = temp.map(datum => datum.res);
+            console.log('---------------    current output data number: ', data.length);
 
-    processBatchImg(interval=200) {
-        setTimeout(function(){
-            if(this.starter) {
-                this.atomProcess(20).then(e => {
-                    console.log('processBatchImg: continue');
-                    if(e.status == 1) {
-                        this.processBatchImg();
-                    } else {
-                        console.log('processBatchImg: no data, waiting ...');
-                        this.processBatchImg(10000);
-                    }
-                });
-            } else {
-                console.log('processBatchImg: audit worker stopped ...');
+            //  step 1: insert data
+            let res = await fh.insertIllegal(rawData, resData).catch(err => {console.log('insertIllegal err: ', err); return;});
+            if(res.code == 500) {
+                console.log('insert insertIllegal data failed, abort now ...');
+                return {code: 500, msg: 'insert insertIllegal data failed', status: 1};
             }
-        }.bind(this), interval);
+            console.log("============>  insert fileinfo");
+
+            //  step 2: delete task
+            res = await fh.deleteTasks(rawData).catch(err => {console.log('deleteTasks err: ', err); return;});
+            if(res.code == 500) {
+                console.log('delete pooling data failed, abort now ...');
+                return {code: 500, msg: 'delete pooling data failed', status: 1};
+            }
+
+            //  step 3: delete file
+            res = await fh.deleteFiles(rawData, resData).catch(err => {console.log('deleteFiles err: ', err); return;});
+            if(res.code == 500) {
+                console.log('delete file failed, abort now ...');
+                return {code: 500, msg: 'delete file failed', status: 1};
+            }
+
+            //  step 4: update statistic
+            resData.map(datum => {
+                if(datum == null) {
+                    this.staticstic.badcall++;
+                } else if(!fh.judgeIllegal(datum)) {
+                    this.staticstic.legal++;
+                } else {
+                    this.staticstic.illegal++;
+                }
+            });
+
+            console.log(`|** deliverHelper.consume **| INFO: ${rawData.length} data were handled ...`, new Date());
+            return {
+                code: 200,
+                length: rawData.length,
+                msg: `${rawData.length} data were handled ...`,
+                status: 1
+            };
+        }
     }
 
-    processBatchVideo(interval=200) {
-        setTimeout(function(){
-            if(this.starter) {
-                this.videoProcess(1).then(e => {
-                    console.log('processBatchVideo: continue');
-                    if(e.status == 1) {
-                        this.processBatchVideo();
-                    } else {
-                        console.log('processBatchVideo: no data waiting ...');
-                        this.processBatchVideo(10000);
-                    }
-                });
-            } else {
-                console.log('processBatchVideo: audit worker stopped ...');
-            }
-        }.bind(this), interval);
+    async sleep(period) {
+        return new Promise(function(resolve, reject){
+            setTimeout(function(){resolve(1)}, period);
+        });
     }
 }
+
+// use UTC time zone
+class deliverHelper {
+    constructor(concurrency=10, preload=200, type='image') {
+        this.job = new job(preload, type)
+        this.worker = new CONCURRENT(concurrency, this.job);
+    }
+
+    auditImgStart() {
+        this.worker.run();
+    }
+
+    auditImgStop() {
+        this.worker.stop();
+    }
+
+    getStatistics() {
+        return this.job.staticstic;
+    }
+}
+
+
 
 module.exports = deliverHelper;

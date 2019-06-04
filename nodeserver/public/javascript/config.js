@@ -35,3 +35,7 @@ let postBody = {
     headers: headers,
     body: null
 };
+
+function closeModal(event) {
+    event.target.closest('.wa-modal-openfile').classList.toggle('component-hidden');
+}

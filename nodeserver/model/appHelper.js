@@ -1,10 +1,19 @@
-const DBConn    = require('./DBConnection');
-const config    = require('./config');
+const DBConnection  = require('./DBConnection');
+const config        = require('./config');
+let DBConn = new DBConnection();
 
 // use UTC time zone
 class appHelper {
     constructor() {
         this.init();
+        this.taskPool = {
+            image: [],
+            imagenum: 0,
+            video: [],
+            videonum: 0
+        }
+        this.poolsize = 2000;
+        this.ratio = 0.2;
     }
 
     init() {
@@ -44,6 +53,45 @@ class appHelper {
         let res = await DBConn.updateData(table, operations).catch(err => {console.log(err); return err});
         console.log('db operation result: ', res)
         return res;
+    }
+
+    async getRawData(req) {
+        let size = req.body.size;
+        let type = req.body.mimeType
+
+        if (this.taskPool[type].length < size) {
+            let data = await this.queryRawData(type, this.poolsize);
+            this.taskPool[type+'num'] = data.num;
+            this.taskPool[type] = data.res;
+        } else {
+            console.log(`......... use cache ......... ${this.taskPool[type].length} data still left`);
+        }
+
+        return {
+            code: 200,
+            data: this.taskPool[type].splice(0, size),
+            num: this.taskPool[type+'num']
+        }
+    }
+
+    async queryRawData(type, size) {
+        let conditions = {
+            $and: [
+                {manualreview: null},
+                {type: type}
+            ]
+        }
+
+        let ops = [];
+        ops.push({'rets.scenes.pulp.suggestion': 'block'});
+        ops.push({'rets.scenes.terror.suggestion': 'block'});
+        ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});
+        conditions.$and.push({$or: ops});
+        
+        console.log('conditions: ', JSON.stringify(conditions));
+        let data = await this.getDataFromDB(conditions, size).catch(err => console.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
+
+        return data;
     }
 
     getSystemStatus() {
