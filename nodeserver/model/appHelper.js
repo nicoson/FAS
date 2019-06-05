@@ -63,6 +63,8 @@ class appHelper {
             let data = await this.queryRawData(type, this.poolsize);
             this.taskPool[type+'num'] = data.num;
             this.taskPool[type] = data.res;
+        } else if(this.taskPool[type].length < this.poolsize * 0.5){
+            this.reloadData(type, this.poolsize * 0.5, this.taskPool[type].length).then(e => console.log('reload done'));
         } else {
             console.log(`......... use cache ......... ${this.taskPool[type].length} data still left`);
         }
@@ -74,7 +76,14 @@ class appHelper {
         }
     }
 
-    async queryRawData(type, size) {
+    reloadData(type, size=100, skip=0) {
+        let data = await queryRawData(type, size, skip);
+        this.taskPool[type+'num'] = data.num;
+        this.taskPool[type].push(...data.res);
+        return 'done';
+    }
+
+    async queryRawData(type, size, skip=0) {
         let conditions = {
             $and: [
                 {manualreview: null},
@@ -89,7 +98,7 @@ class appHelper {
         conditions.$and.push({$or: ops});
         
         console.log('conditions: ', JSON.stringify(conditions));
-        let data = await this.getDataFromDB(conditions, size).catch(err => console.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
+        let data = await this.getDataFromDB(conditions, size, skip).catch(err => console.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
 
         return data;
     }

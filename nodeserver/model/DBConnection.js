@@ -8,7 +8,7 @@ class DBConn {
     constructor() {
         this.connectionPool = null;
         this.status = new Promise(function(resolve, reject) {
-            mongo.connect(CONNECTION, {useNewUrlParser: true, poolSize: 10}, function(err, db) {
+            mongo.connect(CONNECTION, {useNewUrlParser: true, poolSize: 100}, function(err, db) {
                 console.log(`|** DBConn connect pool **| db connect pool create success ...`);
                 this.connectionPool = db;
                 resolve('done');

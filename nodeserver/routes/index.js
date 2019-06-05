@@ -7,11 +7,12 @@ const storeHelper	= require('../model/storeHelper');
 const deliverHelper = require('../model/deliverHelper');
 const appHelper = require('../model/appHelper');
 let sh			= new storeHelper();
-let dh_img		= new deliverHelper(60, 500, 'image');
+let dh_img		= new deliverHelper(30, 500, 'image');
 let dh_video	= new deliverHelper(5, 20, 'video');
 let ah			= new appHelper();
 // const upload	= multer({ dest: config.UPLOAD_PATH });
 let COUNT		= 0;
+let DROPRATIO	= 0.3;
 
 ah.getStatistic('count').then(res => {
 	COUNT = res;
@@ -130,7 +131,7 @@ router.post('/getfilemeta', function(req, res, next) {
 //	only accept base64 file
 router.post('/v1/pic', function(req, res, next) {
 	// console.log(req.body);
-	if(Math.random() < 1){//0.7) {
+	if(Math.random() < (1 - DROPRATIO)){
 		sh.storeProcess(req.body, 'image');
 		COUNT++;
 		ah.updateStatistic('count', COUNT);
@@ -148,7 +149,7 @@ router.post('/v1/pic', function(req, res, next) {
 
 //	only accept base64 file
 router.post('/v1/video', function(req, res, next) {
-	if(Math.random() < 0.30) {
+	if(Math.random() < (1 - DROPRATIO)) {
 		sh.storeProcess(req.body, 'video');
 		res.send({
 			code: 200,
@@ -160,6 +161,12 @@ router.post('/v1/video', function(req, res, next) {
 			msg: 'task abandoned'
 		});
 	}
+});
+
+router.post('/home/setratio', function(req, res, next) {
+	console.log('ratio: ', req.body.dropratio);
+	DROPRATIO = req.body.dropratio;
+	res.send('settle done');
 });
 
 //	trigger audit process

@@ -11,7 +11,7 @@ module.exports = {
 
     // MONGODB:        "mongodb://127.0.0.1:27017",
     // DATABASE:       "fas",
-    // CENSORIMGAPI:   "http://127.0.0.1:12000/v1/wangan",
+    // CENSORIMGAPI:   "http://127.0.0.1:10000/v1/wangan-mix",
     // CENSORVIDEOAPI: "http://127.0.0.1:11000/v3/censor/video",
     // UPLOAD_PATH:    "./public/files",
     // FILESERVER:     "http://127.0.0.1:3333/files",
