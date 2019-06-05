@@ -2,12 +2,12 @@ module.exports = {
     // MONGODB:        "mongodb://100.100.62.149:37017",
     // DATABASE:       "qiniu-esp",
 
-    MONGODB:        "mongodb://100.100.62.122:27017",
+    MONGODB:        "mongodb://100.100.142.238:27017",
     DATABASE:       "fas",
-    CENSORIMGAPI:   "http://100.100.62.122:10000/v3/censor/image",
-    CENSORVIDEOAPI: "http://100.100.62.122:11000/v3/censor/video",
+    CENSORIMGAPI:   "http://100.100.142.238:10000/v3/censor/image",
+    CENSORVIDEOAPI: "http://100.100.142.238:11000/v3/censor/video",
     UPLOAD_PATH:    "./public/files",
-    // FILESERVER:     "http://100.100.62.122:3333/files",
+    // FILESERVER:     "http://100.100.142.238:3333/files",
 
     // MONGODB:        "mongodb://127.0.0.1:27017",
     // DATABASE:       "fas",

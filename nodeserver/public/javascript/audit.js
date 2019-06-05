@@ -82,6 +82,9 @@ function setSettingBar() {
 function fillCardList(data) {
     let tmp = '';
     data.map((datum, ind) => {
+        if(datum.rets.suggestion == "error inference") return;
+        if(typeof(datum.rets.suggestion) == "undefined") return;
+
         let thumb = '';
         if(datum.type == 'image') {
             thumb = '<img src="' + datum.uri.replace('http://127.0.0.1:3333', FILEHOST) + '" alt="">';
@@ -244,6 +247,7 @@ function fileTypeMap(type) {
 
 function illegalType(datum) {
     let res = [];
+    if(typeof(datum.rets.scenes) == 'undefined') return [];
     if(datum.rets.scenes.pulp.suggestion != 'pass') res.push('涉黄');
     if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
     if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
