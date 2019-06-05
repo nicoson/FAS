@@ -63,8 +63,8 @@ class appHelper {
             let data = await this.queryRawData(type, this.poolsize);
             this.taskPool[type+'num'] = data.num;
             this.taskPool[type] = data.res;
-        } else if(this.taskPool[type].length < this.poolsize * 0.5){
-            this.reloadData(type, this.poolsize * 0.5, this.taskPool[type].length).then(e => console.log('reload done'));
+        // } else if(this.taskPool[type].length < this.poolsize * 0.5){
+        //     this.reloadData(type, this.poolsize * 0.5, this.taskPool[type].length).then(e => console.log('reload done'));
         } else {
             console.log(`......... use cache ......... ${this.taskPool[type].length} data still left`);
         }
@@ -76,8 +76,8 @@ class appHelper {
         }
     }
 
-    reloadData(type, size=100, skip=0) {
-        let data = await queryRawData(type, size, skip);
+    async reloadData(type, size=100, skip=0) {
+        let data = await this.queryRawData(type, size, skip);
         this.taskPool[type+'num'] = data.num;
         this.taskPool[type].push(...data.res);
         return 'done';
