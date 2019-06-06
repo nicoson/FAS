@@ -14,6 +14,13 @@ class appHelper {
         }
         this.poolsize = 2000;
         this.ratio = 0.2;
+
+        //  settle for get raw data
+        // 共享一个promise，所有后续的请求全部走该promise，减少重复请求
+        // 设置一个超时时间，防止单实例挂掉，增加系统鲁棒性
+        this.isRender = false;
+        this.renderTimer = null;
+        this.renderProcess = null; // a promise body
     }
 
     init() {
@@ -59,10 +66,22 @@ class appHelper {
         let size = req.body.size;
         let type = req.body.mimeType
 
-        if (this.taskPool[type].length < size) {
-            let data = await this.queryRawData(type, this.poolsize);
+        // 当且仅当，已经有用户请求了，并且该请求尚未超时时，后续请求的用户需要等待
+        if(this.isRender && (new Date().getTime() - this.renderTimer) < 30000) {
+            sconsole.log("........ customer: waiting for render ........");
+            await this.renderProcess;
+            // await this.sleep(1);    // wait for data handle below
+            sconsole.log("........ customer: got from render ........");
+        } else if (this.taskPool[type].length < size) {
+            sconsole.log("........ owner: waiting for render ........");
+            this.renderTimer = new Date().getTime();
+            this.isRender = true;
+            this.renderProcess = this.queryRawData(type, this.poolsize);
+            let data = await this.renderProcess;
             this.taskPool[type+'num'] = data.num;
             this.taskPool[type] = data.res;
+            this.isRender = false;
+            sconsole.log("........ owner: got from render ........");
         // } else if(this.taskPool[type].length < this.poolsize * 0.5){
         //     this.reloadData(type, this.poolsize * 0.5, this.taskPool[type].length).then(e => sconsole.log('reload done'));
         } else {
@@ -101,6 +120,7 @@ class appHelper {
         let starter = new Date().getTime();
         let data = await this.getDataFromDB(conditions, size, skip).catch(err => sconsole.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
         console.log('=================>   inner layer query costs: ', new Date().getTime()-starter);
+        // await this.sleep(20000);
         return data;
     }
 
@@ -159,6 +179,12 @@ class appHelper {
         }];
         DBConn.updateData('statistic', operations);
         return 'done';
+    }
+
+    async sleep(period) {
+        return new Promise(function(resolve, reject){
+            setTimeout(function(){resolve(1)}, period);
+        });
     }
 }
 

@@ -113,9 +113,9 @@ router.get('/getillegalclass', function(req, res, next) {
 
 router.post('/rawdata', function(req, res, next) {
 	// console.log(`......method: ${req.method}`);
-	let starter = new Date().getTime();
+	let timer = new Date().getTime();
 	ah.getRawData(req).then(data => {
-		console.log("=================>   outer layer query costs: ", new Date().getTime()-starter);
+		console.log("=================>   outer layer query costs: ", new Date().getTime()-timer);
 		res.send(data);
 	});
 });
