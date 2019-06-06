@@ -1,21 +1,22 @@
 const express	= require('express');
 const router	= express.Router();
 const log4js	= require('log4js');
-const multer	= require('multer');
+// const multer	= require('multer');
 const config	= require('../model/config');
 const storeHelper	= require('../model/storeHelper');
 const deliverHelper = require('../model/deliverHelper');
 const appHelper = require('../model/appHelper');
 let sh			= new storeHelper();
 let dh_img		= new deliverHelper(30, 500, 'image');
-let dh_video	= new deliverHelper(5, 20, 'video');
+// let dh_video	= new deliverHelper(5, 20, 'video');
 let ah			= new appHelper();
 // const upload	= multer({ dest: config.UPLOAD_PATH });
-let COUNT		= 0;
-let DROPRATIO	= 0.3;
 
+let COUNT		= 0;
+let DROPRATIO	= 1; // set to be 1 to avoid error counting before count loaded
 ah.getStatistic('count').then(res => {
 	COUNT = res;
+	DROPRATIO = 0.3;
 	console.log("Count: ", COUNT);
 })
 
@@ -67,7 +68,9 @@ router.get('/getillegalclass', function(req, res, next) {
 
 router.post('/rawdata', function(req, res, next) {
 	// console.log(`......method: ${req.method}`);
+	let starter = new Date().getTime();
 	ah.getRawData(req).then(data => {
+		console.log("=================>   outer layer query costs: ", new Date().getTime()-starter);
 		res.send(data);
 	});
 });
@@ -151,6 +154,8 @@ router.post('/v1/pic', function(req, res, next) {
 router.post('/v1/video', function(req, res, next) {
 	if(Math.random() < (1 - DROPRATIO)) {
 		sh.storeProcess(req.body, 'video');
+		COUNT++;
+		ah.updateStatistic('count', COUNT);
 		res.send({
 			code: 200,
 			msg: 'task accepted'

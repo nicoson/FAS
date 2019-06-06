@@ -4,6 +4,7 @@ let IND = null;
 
 window.onload = function() {
     getList();
+    getStatistics();
     setInterval(getStatistics,1000);
 }
 

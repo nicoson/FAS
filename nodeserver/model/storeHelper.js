@@ -1,9 +1,9 @@
 const fs		= require('fs');
-const DBConnection    = require('./DBConnection');
 const config    = require('./config');
 const savepath  = config.UPLOAD_PATH;
-
-let DBConn = new DBConnection();
+const sconsole  = require('./sconsole');
+const DBConn  = require('./DBConnection');
+// const DBConn  = require('./DBConnection_bk');
 
 // use UTC time zone
 class storeHelper {
@@ -12,14 +12,14 @@ class storeHelper {
     }
 
     init() {
-        DBConn.createTable('taskpool', ['uid']).then(e => console.log(e));
-        DBConn.createTable('illegal', ['uid']).then(e => console.log(e));
-        DBConn.createTable('statistic').then(e => console.log(e));
+        DBConn.createTable('taskpool', ['uid']).then(e => sconsole.log(e));
+        DBConn.createTable('illegal', ['uid']).then(e => sconsole.log(e));
+        DBConn.createTable('statistic').then(e => sconsole.log(e));
     }
 
     // get tasks in queue
     async storeProcess(file, type) {
-        console.log('|** storeHelper.storeProcess **| INFO: store file into disc and push to <TaskPool> queue table | ', new Date());
+        sconsole.log('|** storeHelper.storeProcess **| INFO: store file into disc and push to <TaskPool> queue table | ', new Date());
         let targetTable = 'taskpool';
         let timestamp = new Date();
         let filename = timestamp.getTime();
@@ -41,9 +41,9 @@ class storeHelper {
         }
 
         //  step 3: insert data to related table
-        let res = await DBConn.insertData(targetTable, [data]).catch(err => console.log(err));
-        console.log(`|** storeHelper.storeProcess **| INFO: data inserted to table <${targetTable}> | `, new Date());
-        console.log(res);
+        let res = await DBConn.insertData(targetTable, [data]).catch(err => sconsole.log(err));
+        sconsole.log(`|** storeHelper.storeProcess **| INFO: data inserted to table <${targetTable}> | `, new Date());
+        sconsole.log(res);
         return res;
     }
 
@@ -52,9 +52,9 @@ class storeHelper {
         var dataBuffer = new Buffer(base64Data, 'base64');
         fs.writeFile(`${savepath}/${name}`, dataBuffer, function(err) {
             if(err){
-                console.log("XXXXXXXXXXXXXXXXXXXXX  save file error ...");
+                sconsole.log("XXXXXXXXXXXXXXXXXXXXX  save file error ...");
             }else{
-                console.log("=====================  save file success ...");
+                sconsole.log("=====================  save file success ...");
             }
         });
     }

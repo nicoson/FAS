@@ -1,6 +1,6 @@
-const DBConnection  = require('./DBConnection');
-const config        = require('./config');
-let DBConn = new DBConnection();
+const sconsole      = require('./sconsole');
+const DBConn  = require('./DBConnection');
+// const DBConn  = require('./DBConnection_bk');
 
 // use UTC time zone
 class appHelper {
@@ -22,9 +22,9 @@ class appHelper {
 
     // get files from <videos> table
     async getDataFromDB(conditions={}, size=50, skip=0) {
-        console.log('|** appHelper.getDataFromDB **| INFO: get data from <videos> table for list view| ', new Date());
-        let res = await DBConn.queryData('illegal', conditions, size, skip).catch(err => {console.log(err); return []});
-        let num = await DBConn.count('illegal', conditions).catch(err => {console.log(err); return []});
+        sconsole.log('|** appHelper.getDataFromDB **| INFO: get data from <videos> table for list view| ', new Date());
+        let res = await DBConn.queryData('illegal', conditions, size, skip).catch(err => {sconsole.log(err); return []});
+        let num = await DBConn.count('illegal', conditions).catch(err => {sconsole.log(err); return []});
         return {
             num: num,
             res: res
@@ -33,7 +33,7 @@ class appHelper {
 
     // update data into table
     async updateDataIntoTable(table, data) {
-        console.log(`|** appHelper.updateDataIntoTable **| INFO: update data into <${table}> table| `, new Date());
+        sconsole.log(`|** appHelper.updateDataIntoTable **| INFO: update data into <${table}> table| `, new Date());
         if(data.length == 0) return 0;
         
         let timestamp = new Date();
@@ -49,9 +49,9 @@ class appHelper {
             };
         });
 
-        console.log(JSON.stringify(operations));
-        let res = await DBConn.updateData(table, operations).catch(err => {console.log(err); return err});
-        console.log('db operation result: ', res)
+        sconsole.log(JSON.stringify(operations));
+        let res = await DBConn.updateData(table, operations).catch(err => {sconsole.log(err); return err});
+        sconsole.log('db operation result: ', res)
         return res;
     }
 
@@ -64,9 +64,9 @@ class appHelper {
             this.taskPool[type+'num'] = data.num;
             this.taskPool[type] = data.res;
         // } else if(this.taskPool[type].length < this.poolsize * 0.5){
-        //     this.reloadData(type, this.poolsize * 0.5, this.taskPool[type].length).then(e => console.log('reload done'));
+        //     this.reloadData(type, this.poolsize * 0.5, this.taskPool[type].length).then(e => sconsole.log('reload done'));
         } else {
-            console.log(`......... use cache ......... ${this.taskPool[type].length} data still left`);
+            sconsole.log(`......... use cache ......... ${this.taskPool[type].length} data still left`);
         }
 
         return {
@@ -97,9 +97,10 @@ class appHelper {
         ops.push({'rets.scenes.politician.suggestion': {$ne:"pass"}});
         conditions.$and.push({$or: ops});
         
-        console.log('conditions: ', JSON.stringify(conditions));
-        let data = await this.getDataFromDB(conditions, size, skip).catch(err => console.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
-
+        sconsole.log('conditions: ', JSON.stringify(conditions));
+        let starter = new Date().getTime();
+        let data = await this.getDataFromDB(conditions, size, skip).catch(err => sconsole.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
+        console.log('=================>   inner layer query costs: ', new Date().getTime()-starter);
         return data;
     }
 
@@ -141,7 +142,7 @@ class appHelper {
 
     async getStatistic(key) {
         let res = await DBConn.queryData('statistic', {name: key}, 1, 0);
-        console.log("res: ", res);
+        // sconsole.log("res: ", res);
         return res.length == 0 ? 0 : res[0].number;
     }
 

@@ -1,8 +1,9 @@
-const fetch = require('node-fetch');
-const config = require('./config');
-const genToken  = require('./genToken');
+const fetch     = require('node-fetch');
+const config    = require('./config');
+const sconsole  = require('./sconsole');
+// const genToken  = require('./genToken');
 
-let gt = new genToken();
+// let gt = new genToken();
 
 class InferenceHelper {
     constructor(isMock = false) {
@@ -19,9 +20,9 @@ class InferenceHelper {
     censorCall(api, reqBody) {
         //  for mock test
         if(this.isMock) {
-            console.log('#################################');
-            console.log('====  This is Mock test data ====');
-            console.log('#################################');
+            sconsole.log('#################################');
+            sconsole.log('====  This is Mock test data ====');
+            sconsole.log('#################################');
             return new Promise(function(resolve, reject) {
                 resolve({
                     "code":0,
@@ -51,14 +52,14 @@ class InferenceHelper {
 
         return new Promise(function(resolve, reject){
             // if(url.search(/.png|.jpg|.jpeg|.webp|.bmp|.gif/i) < 0) {
-            //     console.log('xxxxxxxxxxxxx> url:', url);
+            //     sconsole.log('xxxxxxxxxxxxx> url:', url);
             //     resolve({
             //         code: 204,
             //         data: -1
             //     });
             //     return;
             // }
-            console.info('|** InferenceHelper.censorCall **| INFO: ', reqBody);
+            sconsole.info('|** InferenceHelper.censorCall **| INFO: ', reqBody);
             fetch(api, this.options).then(e => e.json()).then(data => {
                 if(data.error == undefined) {
                     resolve(data);
@@ -97,7 +98,7 @@ class InferenceHelper {
                 }
 
                 Promise.all(p).then(res => {
-                    console.log('censor Batch: ',res);
+                    sconsole.log('censor Batch: ',res);
                     for(let i in res) {
                         if(res[i].code == 0) {
                             // let result = this.resHandler(res[i]);
@@ -117,14 +118,14 @@ class InferenceHelper {
             }.bind(this));
         }
         catch(err) {
-            console.log(err);
+            sconsole.log(err);
             return this.censorBatch(size);
         }
     }
 
     // resHandler(data) {
     //     //  set default as legal
-    //     console.log('data: ', data);
+    //     sconsole.log('data: ', data);
     //     if (data.code == 200 && data.result.suggestion != 'pass') {
     //         data.result.label = 1;
     //     }

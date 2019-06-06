@@ -1,8 +1,9 @@
 //connection to database
-const config = require('./config');
-const mongo = require('mongodb').MongoClient;
-const CONNECTION = config.MONGODB;
-const DATABASE = config.DATABASE;
+const config        = require('./config');
+const sconsole      = require('./sconsole');
+const mongo         = require('mongodb').MongoClient;
+const CONNECTION    = config.MONGODB;
+const DATABASE      = config.DATABASE;
 
 function DBConn(){};
 
@@ -14,13 +15,13 @@ DBConn.createTable = function(table, key=[]) {
     return new Promise(function(resolve, reject){
         mongo.connect(CONNECTION, function(err, db) {
             if (err) throw err;
-            console.log(`|** DBConn.createTable <${table}> **| db connect success ...`);
+            sconsole.log(`|** DBConn.createTable <${table}> **| db connect success ...`);
             let dbase = db.db(DATABASE);
 
             dbase.createCollection(table, function (err, res) {
                 if (err) reject(err);
-                // console.log(res);
-                console.log(`table ${table} created!`);
+                // sconsole.log(res);
+                sconsole.log(`table ${table} created!`);
                 if(key.length != 0) {
                     let fieldOrSpec = {};
                     for(let i of key) {
@@ -39,27 +40,27 @@ DBConn.createTable = function(table, key=[]) {
 
 // insert data if not exist
 DBConn.insertData = function(table, data) {
-    // console.log('|** DBConn.insertData **| total insert data num: ', data.length);
+    // sconsole.log('|** DBConn.insertData **| total insert data num: ', data.length);
     return new Promise(function(resolve, reject){
         if(data.length == 0) {
-            console.info(`|** DBConn.insertData <${table}> **| info: empty data`);
+            sconsole.info(`|** DBConn.insertData <${table}> **| info: empty data`);
             resolve(0);
             return;
         }
 
         mongo.connect(CONNECTION, function(err, db) {
             if (err) reject(err);
-            console.log(`|** DBConn.insertData <${table}> **| db connect success ...`);
+            sconsole.log(`|** DBConn.insertData <${table}> **| db connect success ...`);
             let dbase = db.db(DATABASE);
 
             dbase.collection(table).insertMany(data, {ordered: false}, function(err, res) {
                 if (err) {
                     if(err.result == undefined || err.result.result == undefined || err.result.result.ok != 1) {
-                        console.log(`|** DBConn.insertData <${table}> **| error: `, err);
+                        sconsole.log(`|** DBConn.insertData <${table}> **| error: `, err);
                         reject(err);
                     } else {
                         if(typeof(err.writeErrors) != 'undefined') {
-                            console.log(`|** DBConn.insertData <${table}> **| conflict: \n`, err.writeErrors.map(msg => msg.errmsg));
+                            sconsole.log(`|** DBConn.insertData <${table}> **| conflict: \n`, err.writeErrors.map(msg => msg.errmsg));
                         }
                         resolve(err.result.result.nInserted);
                     }
@@ -78,7 +79,7 @@ DBConn.queryData = function(table, conditions = {}, size=100, skip=0) {
     return new Promise(function(resolve, reject){
         mongo.connect(CONNECTION, function(err, db) {
             if (err) reject(err);
-            console.log(`|** DBConn.queryData <${table}> **| db connect success ...`);
+            sconsole.log(`|** DBConn.queryData <${table}> **| db connect success ...`);
             let dbase = db.db(DATABASE);
 
             dbase.collection(table).find(conditions).sort({_id:1}).skip(skip).limit(size).toArray(function(err, res) {
@@ -114,7 +115,7 @@ DBConn.updateData = function(table, operations) {
                 reject(err);
                 return;
             }
-            console.log(`|** DBConn.updateData <${table}> **| db connect success ...`);
+            sconsole.log(`|** DBConn.updateData <${table}> **| db connect success ...`);
             let dbase = db.db(DATABASE);
 
             dbase.collection(table).bulkWrite(operations, {ordered: false}, function(err, res) {
@@ -138,7 +139,7 @@ DBConn.dropTable = function(table) {
                 reject(err);
                 return;
             }
-            console.log(`|** DBConn.dropTable <${table}> **| db connect success ...`);
+            sconsole.log(`|** DBConn.dropTable <${table}> **| db connect success ...`);
             let dbase = db.db(DATABASE);
 
             dbase.collection(table).deleteMany({}, function(err, res) {
@@ -162,7 +163,7 @@ DBConn.count = function(table, conditions={}) {
                 reject(err);
                 return;
             }
-            console.log(`|** DBConn.count <${table}> **| db connect success ...`);
+            sconsole.log(`|** DBConn.count <${table}> **| db connect success ...`);
             let dbase = db.db(DATABASE);
 
             dbase.collection(table).count(conditions, function(err, res) {
@@ -186,7 +187,7 @@ DBConn.distinct = function(table, field={}) {
                 reject(err);
                 return;
             }
-            console.log(`|** DBConn.distinct <${table}> **| db connect success ...`);
+            sconsole.log(`|** DBConn.distinct <${table}> **| db connect success ...`);
             let dbase = db.db(DATABASE);
 
             dbase.collection(table).distinct(field, function(err, res) {
