@@ -2,7 +2,6 @@ const fetch     = require('node-fetch');
 const config    = require('./config');
 const sconsole  = require('./sconsole');
 // const genToken  = require('./genToken');
-
 // let gt = new genToken();
 
 class InferenceHelper {

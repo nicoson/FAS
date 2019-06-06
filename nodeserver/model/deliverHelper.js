@@ -1,15 +1,15 @@
 const fs		        = require('fs');
-const DBConn  = require('./DBConnection');
-// const DBConn  = require('./DBConnection_bk');
+const DBConn            = require('./DBConnection');
+// const DBConn            = require('./DBConnection_bk');
 const CONCURRENT        = require('./concurrent');
 const InferenceHelper   = require('./Inference');
 const config            = require('./config');
-const appHelper         = require('../model/appHelper');
+// const appHelper         = require('../model/appHelper');
 const savepath          = config.UPLOAD_PATH;
-const sconsole = require('./sconsole');
+const sconsole          = require('./sconsole');
 
-let iHelp   = new InferenceHelper(false);
-let ah      = new appHelper();
+let iHelp = new InferenceHelper(false);
+// let ah = new appHelper();
 
 class fileHandler {
     constructor() {}
@@ -338,11 +338,11 @@ class deliverHelper {
         this.worker = new CONCURRENT(concurrency, this.job);
     }
 
-    auditImgStart() {
+    auditStart() {
         this.worker.run();
     }
 
-    auditImgStop() {
+    auditStop() {
         this.worker.stop();
     }
 

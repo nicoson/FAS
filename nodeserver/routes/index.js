@@ -1,15 +1,16 @@
 const express	= require('express');
 const router	= express.Router();
 const log4js	= require('log4js');
-// const multer	= require('multer');
 const config	= require('../model/config');
 const storeHelper	= require('../model/storeHelper');
 const deliverHelper = require('../model/deliverHelper');
 const appHelper = require('../model/appHelper');
 let sh			= new storeHelper();
-let dh_img		= new deliverHelper(30, 500, 'image');
-// let dh_video	= new deliverHelper(5, 20, 'video');
 let ah			= new appHelper();
+let dh_img		= new deliverHelper(30, 500, 'image');
+let dh_video	= new deliverHelper(5, 20, 'video');
+
+// const multer	= require('multer');
 // const upload	= multer({ dest: config.UPLOAD_PATH });
 
 let COUNT		= 0;
@@ -49,6 +50,46 @@ router.get('/spider', function(req, res, next) {
 /* ====================== *\
 	  client side api 
 \* ====================== */
+
+
+//	home page api
+// ===============
+router.post('/home/setratio', function(req, res, next) {
+	console.log('ratio: ', req.body.dropratio);
+	DROPRATIO = req.body.dropratio;
+	res.send('settle done');
+});
+
+router.get('/home/jobstatistic', function(req, res, next) {
+	res.send({
+		code: 200,
+		data: {
+			total: COUNT,
+			img: dh_img.getStatistics(),
+			video: dh_video.getStatistics()
+		}
+	})
+});
+
+//	trigger audit process
+router.get('/trigger', function(req, res, next) {
+	dh_img.auditStart();
+	// dh_video.auditStart();
+	res.send({
+		code: 200,
+		msg: 'audit task triggered'
+	});
+});
+
+router.get('/stopper', function(req, res, next) {
+	dh_img.auditStop();
+	// dh_video.auditStop();
+	res.send({
+		code: 200,
+		msg: 'audit task stopped'
+	});
+});
+
 router.get('/systemstatus', function(req, res, next) {
 	ah.getSystemStatus().then(data => {
 		res.send({
@@ -59,6 +100,10 @@ router.get('/systemstatus', function(req, res, next) {
 	}).catch(err => {res.send({code:500, err: err})});
 });
 
+
+
+//	audit page api
+// ================
 router.get('/getillegalclass', function(req, res, next) {
 	res.send({
 		classItem: config.CLASSIFY,
@@ -168,36 +213,5 @@ router.post('/v1/video', function(req, res, next) {
 	}
 });
 
-router.post('/home/setratio', function(req, res, next) {
-	console.log('ratio: ', req.body.dropratio);
-	DROPRATIO = req.body.dropratio;
-	res.send('settle done');
-});
-
-//	trigger audit process
-router.get('/trigger', function(req, res, next) {
-	dh_img.auditImgStart();
-	// dh_video.auditImgStart();
-	res.send({
-		code: 200,
-		msg: 'audit task triggered'
-	});
-});
-
-router.get('/stopper', function(req, res, next) {
-	dh_img.auditImgStop();
-	// dh_video.auditImgStop();
-	res.send({
-		code: 200,
-		msg: 'audit task stopped'
-	});
-});
-
-router.get('/home/jobstatistic', function(req, res, next) {
-	res.send({
-		code: 200,
-		data: dh_img.getStatistics()
-	})
-});
 
 module.exports = router;

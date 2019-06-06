@@ -178,7 +178,7 @@ class DBConn {
 };
 
 
-// Singleton pattern
+// Singleton Pattern
 let DBConnection = new DBConn();
 
 module.exports = DBConnection;

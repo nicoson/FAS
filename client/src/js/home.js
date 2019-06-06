@@ -5,7 +5,7 @@ let IND = null;
 window.onload = function() {
     getList();
     getStatistics();
-    setInterval(getStatistics,1000);
+    setInterval(getStatistics, 3000);
 }
 
 function getList() {
@@ -44,9 +44,10 @@ function stopAudit() {
 
 function getStatistics() {
     fetch(APIHOST + '/home/jobstatistic').then(e => e.json()).then(e => {
-        document.querySelector('#wxb_home_badcall').innerHTML = e.data.badcall;
-        document.querySelector('#wxb_home_legal').innerHTML = e.data.legal;
-        document.querySelector('#wxb_home_illegal').innerHTML = e.data.illegal;
+        document.querySelector('#wxb_home_count').innerHTML = e.data.total;
+        document.querySelector('#wxb_home_badcall').innerHTML = e.data.img.badcall + e.data.video.badcall;
+        document.querySelector('#wxb_home_legal').innerHTML = e.data.img.legal + e.data.video.legal;
+        document.querySelector('#wxb_home_illegal').innerHTML = e.data.img.illegal + e.data.video.illegal;
     });
 }
 
