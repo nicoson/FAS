@@ -79,12 +79,12 @@ class DBConn {
         }.bind(this));
     }
     
-    queryData(table, conditions = {}, size=100, skip=0) {
+    queryData(table, conditions = {}, size=100, skip=0, order=1) {
         return new Promise(function(resolve, reject){
             this.status.then(() => {
                 // sconsole.log('==============>   this: ',this)
                 let dbase = this.connectionPool.db(DATABASE);
-                dbase.collection(table).find(conditions).sort({_id:1}).skip(skip).limit(size).toArray(function(err, res) {
+                dbase.collection(table).find(conditions).sort({_id:order}).skip(skip).limit(size).toArray(function(err, res) {
                     if (err) {
                         reject(err);
                     } else {

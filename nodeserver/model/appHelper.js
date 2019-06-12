@@ -28,9 +28,9 @@ class appHelper {
     }
 
     // get files from <videos> table
-    async getDataFromDB(conditions={}, size=50, skip=0) {
+    async getDataFromDB(conditions={}, size=50, skip=0, order=1) {
         sconsole.log('|** appHelper.getDataFromDB **| INFO: get data from <videos> table for list view| ', new Date());
-        let res = await DBConn.queryData('illegal', conditions, size, skip).catch(err => {sconsole.log(err); return []});
+        let res = await DBConn.queryData('illegal', conditions, size, skip, order).catch(err => {sconsole.log(err); return []});
         let num = await DBConn.count('illegal', conditions).catch(err => {sconsole.log(err); return []});
         return {
             num: num,
@@ -76,7 +76,7 @@ class appHelper {
             sconsole.log("........ owner: waiting for render ........");
             this.renderTimer = new Date().getTime();
             this.isRender = true;
-            this.renderProcess = this.queryRawData(type, this.poolsize);
+            this.renderProcess = this.queryRawData(type, this.poolsize, 0, -1);
             let data = await this.renderProcess;
             this.taskPool[type+'num'] = data.num;
             this.taskPool[type] = data.res;
@@ -102,7 +102,7 @@ class appHelper {
         return 'done';
     }
 
-    async queryRawData(type, size, skip=0) {
+    async queryRawData(type, size, skip=0, order=1) {
         let conditions = {
             $and: [
                 {manualreview: null},
@@ -118,7 +118,7 @@ class appHelper {
         
         sconsole.log('conditions: ', JSON.stringify(conditions));
         let starter = new Date().getTime();
-        let data = await this.getDataFromDB(conditions, size, skip).catch(err => sconsole.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
+        let data = await this.getDataFromDB(conditions, size, skip, order).catch(err => sconsole.log(`|** appHelper.queryRawData **| ERROR: get raw data error: ${err}| `, new Date()));
         console.log('=================>   inner layer query costs: ', new Date().getTime()-starter);
         // await this.sleep(20000);
         return data;

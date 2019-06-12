@@ -7,7 +7,7 @@ const deliverHelper = require('../model/deliverHelper');
 const appHelper = require('../model/appHelper');
 let sh			= new storeHelper();
 let ah			= new appHelper();
-let dh_img		= new deliverHelper(30, 500, 'image');
+let dh_img		= new deliverHelper(50, 500, 'image');
 let dh_video	= new deliverHelper(5, 20, 'video');
 
 // const multer	= require('multer');
