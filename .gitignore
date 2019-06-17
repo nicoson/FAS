@@ -7,3 +7,4 @@ package-lock.json
 docker-compose.yml
 nginx.conf
 nodeserver/public/files
+nodeserver/index.log
