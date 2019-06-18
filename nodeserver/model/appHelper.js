@@ -95,12 +95,12 @@ class appHelper {
         }
     }
 
-    async reloadData(type, size=100, skip=0) {
-        let data = await this.queryRawData(type, size, skip);
-        this.taskPool[type+'num'] = data.num;
-        this.taskPool[type].push(...data.res);
-        return 'done';
-    }
+    // async reloadData(type, size=100, skip=0) {
+    //     let data = await this.queryRawData(type, size, skip);
+    //     this.taskPool[type+'num'] = data.num;
+    //     this.taskPool[type].push(...data.res);
+    //     return 'done';
+    // }
 
     async queryRawData(type, size, skip=0, order=1) {
         let conditions = {

@@ -38,6 +38,11 @@ if(argv.env == ENV_Production){
 	// JsonConfigDest = destDir + "/Content/json";
 }
 
+var pkg = null;
+if(typeof(argv.pkg) != 'undefined') {
+	pkg = 'src/js/' + argv.pkg + '/*.js';
+}
+
 
 // setting the path
 var paths = {
@@ -112,7 +117,17 @@ gulp.task('js', function() {
 		.pipe(browserSync.reload({stream:true}));
 	}else{
 		return gulp.src(paths.appjs)
-		// .pipe(babel({presets: ['es2015']}))
+		.pipe(gulp.dest(paths.appjsDest))
+		.pipe(browserSync.reload({stream:true}));
+	}
+});
+
+// Copying and minifying js pkg files
+gulp.task('jspkg', function() {
+	// Minify and copy all JavaScript (except vendor scripts) 
+	// with sourcemaps all the way down
+	if(pkg){
+		return gulp.src(pkg)
 		.pipe(gulp.dest(paths.appjsDest))
 		.pipe(browserSync.reload({stream:true}));
 	}
@@ -215,6 +230,7 @@ gulp.task('browserSync', ['less', 'js'], function() {
 
     gulp.watch(paths.less, ['less']);
 	gulp.watch(paths.appjs, ['js']);
+	if(pkg)	gulp.watch(pkg, ['jspkg']);
     gulp.watch(paths.appviews, function(){
 		return gulp.src(paths.appviews)
 		.pipe(gulp.dest(paths.appviewsDest))
@@ -224,5 +240,5 @@ gulp.task('browserSync', ['less', 'js'], function() {
 
 
 // gulp.task('default', ['watch', 'scripts', 'images']);
-gulp.task('default', gulpSequence('clean', 'less', 'js', 'copy'));
-gulp.task('test', gulpSequence('clean', 'less', 'js', 'copy', 'jshint', 'qunit'));
+gulp.task('default', gulpSequence('clean', 'less', 'js', 'jspkg', 'copy'));
+gulp.task('test', gulpSequence('clean', 'less', 'js', 'jspkg', 'copy', 'jshint', 'qunit'));

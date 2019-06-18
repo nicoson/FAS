@@ -109,7 +109,7 @@ function fillCardList(data) {
                             </tr>
                             <tr>
                                 <td>违规场景：</td>
-                                <td>${illegalMap(datum.rets.classes)}</td>
+                                <td>${illegalMap(datum.rets)}</td>
                             </tr>
                         </table>
                     </div>
@@ -256,7 +256,37 @@ function illegalType(datum) {
 }
 
 function illegalMap(data) {
-    return data.map(datum => {
-        return OPTIONS.detectItem[datum];
-    });
+    //  wa-sh
+    if(typeof(data.classes) != 'undefined'){
+        return data.classes.map(datum => {
+            return OPTIONS.detectItem[datum];
+        });
+    } else {
+        // general situation - use v1 censor
+        return data.details.map(datum => v1_map(datum)).join(' ');
+    }
+}
+
+function v1_map(datum) {
+    switch(datum.type) {
+        case 'pulp':
+            if(datum.label == 0) {
+                return '涉黄';
+            } else {
+                return '';
+            }
+        case 'terror':
+            if(datum.label == 1) {
+                return datum.class;
+            } else {
+                return '';
+            }
+        case 'politician':
+            if(datum.label == 1) {
+                return '敏感人物';
+            } else {
+                return '';
+            }
+
+    }
 }

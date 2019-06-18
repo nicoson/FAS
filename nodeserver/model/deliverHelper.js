@@ -223,10 +223,7 @@ class job {
             "data": {
                 "uri": datum.uri
             },
-            "params": {
-                "detail": true,
-                "type": "internet_terror"
-            }
+            "params": config.CENSOR_PARAM
         });
         let res = await iHelp.censorCall(config.CENSORIMGAPI, reqBody).catch(err => sconsole.log('image inference err: ', err));
         // sconsole.log('res: ', res);
