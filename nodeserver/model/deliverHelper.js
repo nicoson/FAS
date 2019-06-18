@@ -17,7 +17,7 @@ class fileHandler {
     // get tasks in queue
     queryTasks(size, type='image') {
         sconsole.log('|** deliverHelper.queryTasks **| INFO: query tasks from taskpool', new Date());
-        let filter = {type: type};
+        let filter = {type: type, status:{$exists:false}};
         sconsole.log(filter);
         return new Promise(function(resolve, reject) {
             DBConn.queryData('taskpool', filter, size).then(data => {
@@ -37,12 +37,12 @@ class fileHandler {
     // change tasks' status to 'locked' or null
     //      locked: task is lock inavoid of being taken;
     //      null: task is free for pick
-    switchTaskStatus(data, lock = null) {
-        sconsole.log(`|** deliverHelper.updateTasks **| INFO: update tasks' status in taskpool`, new Date());
+    switchTaskStatus(data, lock='lock') {
+        sconsole.log(`|** deliverHelper.switchTaskStatus **| INFO: update tasks' status in taskpool`, new Date());
         let timestamp = (new Date()).getTime();
         let operations = data.map(datum => {return {
             updateOne: {
-                filter: {md5: datum.md5},
+                filter: {_id: datum._id},
                 update: {$set: {
                     status: lock,
                     update: timestamp
@@ -176,11 +176,12 @@ let fh = new fileHandler();
 class job {
     constructor(preload=100, type='image') {
         this.preload = preload;
-        this.data = [];
+        this.jobData = [];
         this.fetching = false;
         this.type = type;
         this.callJob = (type == 'image') ? this.callImageJob : this.callVideoJob;
         this.staticstic = {badcall: 0, legal: 0, illegal: 0};
+        this.consumeFlag = true;
     }
 
     start() {
@@ -197,22 +198,23 @@ class job {
             sconsole.log('  ... waiting for fetching ...');
             await this.sleep(1000);
         }
-        if(this.data.length < 1) {
+        if(this.jobData.length < 1) {
             this.fetching = true;
             while(this.fetching) {
-                this.data = (await fh.queryTasks(this.preload,this.type)).data;
+                this.jobData = (await fh.queryTasks(this.preload, this.type)).data;
                 // 如果取不到数据，那么等待多一会儿
-                if(this.data.length > 0) {
+                if(this.jobData.length > 0) {
+                    await fh.switchTaskStatus(this.jobData);
                     this.fetching = false;
                 } else {
                     await this.sleep(10000);
                 }
             }
             
-            // sconsole.log('data: ',this.data);
-            sconsole.log(`            ... fetch: ${this.data.length} jobs ...`);
+            // sconsole.log('data: ',this.jobData);
+            sconsole.log(`            ... fetch: ${this.jobData.length} jobs ...`);
         }
-        return this.data.splice(0,1)[0];
+        return this.jobData.splice(0,1)[0];
     }
 
     async callImageJob(callBack) {
@@ -275,11 +277,15 @@ class job {
 
     async consume(data) {
         let size = Math.min(100, Math.ceil(this.preload * 0.3));
-        if(data.length > size) {
+        if(data.length > size && this.consumeFlag) {
+            sconsole.log('---------------    current output data number: ', data.length);
+            this.consumeFlag = false;   // 设置数据处置状态标志，由于该过程是同步的，需要防止该过程被高频调用，导致多次重复统计
             let temp = data.splice(0, size);
             let rawData = temp.map(datum => datum.source);
             let resData = temp.map(datum => datum.res);
-            sconsole.log('---------------    current output data number: ', data.length);
+            // console.log('--------------------------------> rawData length: ', rawData.length);
+            // console.log('--------------------------------> resData length: ', resData.length);
+            // console.log('---------------    current output size: ', size);
 
             //  step 1: insert data
             let res = await fh.insertIllegal(rawData, resData).catch(err => {sconsole.log('insertIllegal err: ', err); return;});
@@ -315,6 +321,7 @@ class job {
             });
 
             sconsole.log(`|** deliverHelper.consume **| INFO: ${rawData.length} data were handled ...`, new Date());
+            this.consumeFlag = true;
             return {
                 code: 200,
                 length: rawData.length,

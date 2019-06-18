@@ -180,18 +180,22 @@ router.post('/getfilemeta', function(req, res, next) {
 router.post('/v1/pic', function(req, res, next) {
 	// console.log(req.body);
 	if(Math.random() < (1 - DROPRATIO)){
-		sh.storeProcess(req.body, 'image');
 		COUNT++;
-		ah.updateStatistic('count', COUNT);
+		sh.storeProcess(req.body, 'image');
+		if(COUNT%100 == 0) {
+			ah.updateStatistic('count', COUNT);
+		}
 		res.send({
 			code: 200,
 			msg: 'task accepted'
 		});
+		// console.log('=======>   task accepted');
 	} else {
 		res.send({
 			code: 200,
 			msg: 'task abandoned'
 		});
+		console.log('------->   task abandoned');
 	}
 });
 
@@ -200,7 +204,9 @@ router.post('/v1/video', function(req, res, next) {
 	if(Math.random() < (1 - DROPRATIO)) {
 		sh.storeProcess(req.body, 'video');
 		COUNT++;
-		ah.updateStatistic('count', COUNT);
+		if(COUNT%100 == 0) {
+			ah.updateStatistic('count', COUNT);
+		}
 		res.send({
 			code: 200,
 			msg: 'task accepted'
