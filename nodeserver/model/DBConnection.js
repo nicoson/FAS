@@ -96,6 +96,23 @@ class DBConn {
         }.bind(this));
     }
     
+    queryDataCol(table, condition, col={_id:0,uid:1}) {
+        return new Promise(function(resolve, reject){
+            this.status.then(() => {
+                // sconsole.log('==============>   this: ',this)
+                let dbase = this.connectionPool.db(DATABASE);
+                dbase.collection(table).find(condition).project(col).toArray(function(err, res) {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(res);
+                    }
+                    return
+                });
+            });
+        }.bind(this));
+    }
+    
     // update/delete with different conditions
     /* Example:
             let operations = data.map(datum => {return {

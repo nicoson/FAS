@@ -42,7 +42,7 @@ function getFilterItem() {
         };
         ITEMS = Object.assign(data.classItem, data.detectItem);
         // document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
-        document.querySelector('#wa_list_object_option_container').parentElement.innerHTML = '';
+        document.querySelector('#wa_list_object_option_container').innerHTML = objectTemp;
     });
 }
 
@@ -79,8 +79,8 @@ function requestIllegalData() {
         startDate: startDate,
         endDate: endDate,
         // md5: md5,
-        classifyOption: [],
-        detectOption: [],
+        classifyOption: [...CLASSOPTION],
+        detectOption: [...DETECTOPTION],
         type: filetype,
         page: PAGENUM,
         pagesize: PAGESIZE
@@ -135,7 +135,7 @@ function fillListTable(ele, data, isAppend=false) {
                         <${(data[i].type=='image')?'img':'video'} src="${data[i].uri.replace('http://127.0.0.1:3333', FILEHOST)}" onclick="showContent(event)" controls="controls">
                     </td>
                     <td>${fileTypeMap(data[i].type)}</td>
-                    <td>${illegalMap(data[i].rets)}</td>
+                    <td>${illegalMap(data[i].rets.classes)}</td>
                     <td>${data[i].info.id}</td>
                     <td><button class="btn-danger" onclick="hideItem(event)" data-uid="${data[i].uid}">隐藏</button></td>
                 </tr>
@@ -304,31 +304,9 @@ function fileType(datum) {
 }
 
 function illegalMap(data) {
-    return data.details.map(datum => v1_map(datum)).join(' ');
-}
-
-function v1_map(datum) {
-    switch(datum.type) {
-        case 'pulp':
-            if(datum.label == 0) {
-                return '涉黄';
-            } else {
-                return '';
-            }
-        case 'terror':
-            if(datum.label == 1) {
-                return datum.class;
-            } else {
-                return '';
-            }
-        case 'politician':
-            if(datum.label == 1) {
-                return '敏感人物';
-            } else {
-                return '';
-            }
-
-    }
+    return data.map(datum => {
+        return OPTIONS.detectItem[datum];
+    });
 }
 
 function showContent(event) {
