@@ -12,13 +12,15 @@ let iHelp = new InferenceHelper(false);
 // let ah = new appHelper();
 
 class fileHandler {
-    constructor() {}
+    constructor(type) {
+        this.judgeIllegal = (type == 'image') ? this.judgeIllegalImage : this.judgeIllegalVideo;
+    }
 
     // get tasks in queue
     queryTasks(size, type='image') {
         sconsole.log('|** deliverHelper.queryTasks **| INFO: query tasks from taskpool', new Date());
         let filter = {type: type, status:{$exists:false}};
-        sconsole.log(filter);
+        // sconsole.log('-------  query filter: ', filter);
         return new Promise(function(resolve, reject) {
             DBConn.queryData('taskpool', filter, size).then(data => {
                 resolve({
@@ -165,14 +167,19 @@ class fileHandler {
         });
     }
 
-    judgeIllegal(datum) {
+    judgeIllegalImage(datum) {
         // illegal: true;  normal: false
         // sconsole.log('XXXXX test XXXX:  ', Object.keys(datum).length, datum.label, datum)
         return (datum != null && Object.keys(datum).length > 0 && datum.label == 1);
     }
+
+    judgeIllegalVideo(datum) {
+        // illegal: true;  normal: false
+        return (datum.suggestion == 'block');
+    }
 }
 
-let fh = new fileHandler();
+// let fh = new fileHandler();
 class job {
     constructor(preload=100, type='image') {
         this.preload = preload;
@@ -181,7 +188,9 @@ class job {
         this.type = type;
         this.callJob = (type == 'image') ? this.callImageJob : this.callVideoJob;
         this.staticstic = {badcall: 0, legal: 0, illegal: 0};
-        this.consumeFlag = true;
+        // this.consumeFlag = true;
+        this.consumeSize = (type == 'image') ? 100 : 1;
+        this.fh = new fileHandler(type);
     }
 
     start() {
@@ -194,31 +203,19 @@ class job {
 
     async getDatum() {
         // 如果已经有其他 job 在请求数据了，那么等待
-        while(this.fetching) {
+        let count = 0;
+        while(this.jobData.length < 1) {
             sconsole.log('  ... waiting for fetching ...');
             await this.sleep(1000);
-        }
-        if(this.jobData.length < 1) {
-            this.fetching = true;
-            while(this.fetching) {
-                this.jobData = (await fh.queryTasks(this.preload, this.type)).data;
-                // 如果取不到数据，那么等待多一会儿
-                if(this.jobData.length > 0) {
-                    await fh.switchTaskStatus(this.jobData);
-                    this.fetching = false;
-                } else {
-                    await this.sleep(10000);
-                }
-            }
-            
-            // sconsole.log('data: ',this.jobData);
-            sconsole.log(`            ... fetch: ${this.jobData.length} jobs ...`);
+            count++;
+            if (count > 3) return null; // 等待3秒后销毁该线程
         }
         return this.jobData.splice(0,1)[0];
     }
 
     async callImageJob(callBack) {
         let datum = await this.getDatum();
+        if(datum == null) return callBack(null);
         let reqBody = JSON.stringify({
             "data": {
                 "uri": datum.uri
@@ -242,9 +239,10 @@ class job {
 
     async callVideoJob(callBack) {
         let datum = await this.getDatum();
+        if(datum == null) return callBack(null);
         let reqBody = JSON.stringify({
             "data": {
-                "uri": task.data[0].uri
+                "uri": datum.uri
             },
             "params": {
                 "scenes": [
@@ -258,8 +256,8 @@ class job {
             }
         });
         let res = await iHelp.censorCall(config.CENSORVIDEOAPI, reqBody).catch(err => sconsole.log('video inference err: ', err));
-        // sconsole.log('res: ', res);
-        if(res.code == 0) {
+        sconsole.log('|** callVideoJob **| res: ', res);
+        if(res.code == 200) {
             callBack({
                 source: datum,
                 res: res.result
@@ -272,20 +270,36 @@ class job {
         }
     }
 
+    //  独立运行解耦模块，单线程专门获取待处理数据集，只能由一个任务触发管理
+    async feedDataQueue() {
+        //  如果前一次轮询还未结束，那么跳过这次轮询
+        sconsole.log('-------------  trigger feed data: ', this.jobData.length, this.preload);
+        if(this.jobData.length < (this.preload/2) && !this.fetching) {
+            this.fetching = true;
+            let data = (await this.fh.queryTasks(this.preload, this.type)).data;
+            // sconsole.log('------   fetch data: ', data);
+            if(data.length > 0) {
+                await this.fh.switchTaskStatus(data);
+                this.jobData.push(...data);
+                sconsole.log(`            ... fetch: ${this.jobData.length} jobs ...`);
+            } else {
+                // 等下一次轮询
+            }
+            this.fetching = false;
+        }
+    }
+
+    //  独立运行解耦模块，单线程专门处理结果数据集，只能由一个任务触发管理
     async consume(data) {
-        let size = Math.min(100, Math.ceil(this.preload * 0.3));
-        if(data.length > size && this.consumeFlag) {
-            sconsole.log('---------------    current output data number: ', data.length);
-            this.consumeFlag = false;   // 设置数据处置状态标志，由于该过程是同步的，需要防止该过程被高频调用，导致多次重复统计
-            let temp = data.splice(0, size);
+        sconsole.log('---------------    trigger consume function: current data length', data.length);
+        if(data.length > 0) {
+            sconsole.log('---------------    current output data: ', data);
+            let temp = data.splice(0);
             let rawData = temp.map(datum => datum.source);
             let resData = temp.map(datum => datum.res);
-            // console.log('--------------------------------> rawData length: ', rawData.length);
-            // console.log('--------------------------------> resData length: ', resData.length);
-            // console.log('---------------    current output size: ', size);
 
             //  step 1: insert data
-            let res = await fh.insertIllegal(rawData, resData).catch(err => {sconsole.log('insertIllegal err: ', err); return;});
+            let res = await this.fh.insertIllegal(rawData, resData).catch(err => {sconsole.log('insertIllegal err: ', err); return;});
             if(res.code == 500) {
                 sconsole.log('insert insertIllegal data failed, abort now ...');
                 return {code: 500, msg: 'insert insertIllegal data failed', status: 1};
@@ -293,14 +307,14 @@ class job {
             sconsole.log("============>  insert fileinfo");
 
             //  step 2: delete task
-            res = await fh.deleteTasks(rawData).catch(err => {sconsole.log('deleteTasks err: ', err); return;});
+            res = await this.fh.deleteTasks(rawData).catch(err => {sconsole.log('deleteTasks err: ', err); return;});
             if(res.code == 500) {
                 sconsole.log('delete pooling data failed, abort now ...');
                 return {code: 500, msg: 'delete pooling data failed', status: 1};
             }
 
             //  step 3: delete file
-            res = await fh.deleteFiles(rawData, resData).catch(err => {sconsole.log('deleteFiles err: ', err); return;});
+            res = await this.fh.deleteFiles(rawData, resData).catch(err => {sconsole.log('deleteFiles err: ', err); return;});
             if(res.code == 500) {
                 sconsole.log('delete file failed, abort now ...');
                 return {code: 500, msg: 'delete file failed', status: 1};
@@ -310,7 +324,7 @@ class job {
             resData.map(datum => {
                 if(datum == null) {
                     this.staticstic.badcall++;
-                } else if(!fh.judgeIllegal(datum)) {
+                } else if(!this.fh.judgeIllegal(datum)) {
                     this.staticstic.legal++;
                 } else {
                     this.staticstic.illegal++;
@@ -325,6 +339,8 @@ class job {
                 msg: `${rawData.length} data were handled ...`,
                 status: 1
             };
+        } else {
+            sconsole.log(`|** deliverHelper.consume **| INFO: no data to consume ...`, new Date());
         }
     }
 

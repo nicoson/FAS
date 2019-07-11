@@ -1,9 +1,9 @@
 module.exports = {
     // general
-    MONGODB:        "mongodb://100.100.142.238:27017",
+    MONGODB:        "mongodb://100.100.142.29:37017",
     DATABASE:       "fas",
-    CENSORIMGAPI:   "http://100.100.141.113:10000/v1/image/censor",
-    CENSORVIDEOAPI: "http://100.100.141.113:11000/v3/censor/video",
+    CENSORIMGAPI:   "http://100.100.142.29:10000/v1/image/censor",
+    CENSORVIDEOAPI: "http://100.100.142.29:11000/v3/censor/video",
     UPLOAD_PATH:    "./public/files",
     FILESERVER:     "http://100.100.141.209:3000/files",
 

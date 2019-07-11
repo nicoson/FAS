@@ -135,7 +135,7 @@ function fillListTable(ele, data, isAppend=false) {
                         <${(data[i].type=='image')?'img':'video'} src="${data[i].uri.replace('http://127.0.0.1:3333', FILEHOST)}" onclick="showContent(event)" controls="controls">
                     </td>
                     <td>${fileTypeMap(data[i].type)}</td>
-                    <td>${illegalMap(data[i].rets)}</td>
+                    <td>${illegalMap(data[i].rets, data[i].type)}</td>
                     <td>${data[i].info.id}</td>
                     <td><button class="btn-danger" onclick="hideItem(event)" data-uid="${data[i].uid}">隐藏</button></td>
                 </tr>
@@ -303,8 +303,16 @@ function fileType(datum) {
     return res.join(',');
 }
 
-function illegalMap(data) {
-    return data.details.map(datum => v1_map(datum)).join(' ');
+function illegalMap(data, type) {
+    if(type == 'image') {
+        return data.details.map(datum => v1_map(datum)).join(' ');
+    } else {
+        let a = [];
+        if (data.scenes.politician.suggestion == 'block') a.push('敏感人物');
+        if (data.scenes.pulp.suggestion == 'block') a.push('涉黄');
+        if (data.scenes.terror.suggestion == 'block') a.push('暴恐');
+        return a.join(',');
+    }
 }
 
 function v1_map(datum) {

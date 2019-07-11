@@ -2,7 +2,7 @@
 function sconsole() {}
 
 sconsole.log = function(...args) {
-    let flag = false;
+    let flag = true;
     if(flag) {
         console.log(...args);
     }

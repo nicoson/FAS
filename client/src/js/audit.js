@@ -84,6 +84,8 @@ function fillCardList(data) {
     data.map((datum, ind) => {
         // if(datum.rets.suggestion == "error inference") return;
         // if(typeof(datum.rets.suggestion) == "undefined") return;
+        // For beijing wangan special
+        // if(typeof(datum.rets.classes) == 'undefined' && datum.rets.details.filter(e=>{return e.class=="special_characters"}).length > 0) return;
 
         let thumb = '';
         if(datum.type == 'image') {
@@ -93,7 +95,7 @@ function fillCardList(data) {
         } else {
             thumb = '<img src="' + datum.message.cover + '" alt="">';
         }
-        tmp += `<div class="wa-list-card ${SETTINGS.defaultClass == 'normal' ? '':'wa-list-card-abnormal'}" onclick="toggleClass(event)" data-index=${ind}>
+        tmp += `<div class="wa-list-card ${SETTINGS.defaultClass == 'normal' ? '':'wa-list-card-abnormal'}" onclick="toggleClass(event)" data-index=${datum.uid}>
                     <div class="wa-list-card-frame wa-list-card-frame-size-${SETTINGS.font}">
                         ${thumb}
                     </div>
@@ -109,7 +111,7 @@ function fillCardList(data) {
                             </tr>
                             <tr>
                                 <td>违规场景：</td>
-                                <td>${illegalMap(datum.rets)}</td>
+                                <td>${illegalMap(datum.rets, datum.type)}</td>
                             </tr>
                         </table>
                     </div>
@@ -122,8 +124,9 @@ function fillCardList(data) {
 
 function toggleClass(event) {
     event.target.closest('.wa-list-card').classList.toggle('wa-list-card-abnormal');
-    DATA[event.target.closest('.wa-list-card').dataset.index].illegal = !DATA[event.target.closest('.wa-list-card').dataset.index].illegal;
-    DATA[event.target.closest('.wa-list-card').dataset.index].manualreview = !DATA[event.target.closest('.wa-list-card').dataset.index].manualreview;
+    let target = DATA.find(e => e.uid == event.target.closest('.wa-list-card').dataset.index);
+    target.illegal = !target.illegal;
+    target.manualreview = !target.manualreview;
     // console.log(event);
 }
 
@@ -255,16 +258,25 @@ function illegalType(datum) {
     return res.join(',');
 }
 
-function illegalMap(data) {
-    //  wa-sh
-    if(typeof(data.classes) != 'undefined'){
-        return data.classes.map(datum => {
-            return OPTIONS.detectItem[datum];
-        });
+function illegalMap(data, type) {
+    if(type == 'image') {
+        //  wa-sh
+        if(typeof(data.classes) != 'undefined'){
+            return data.classes.map(datum => {
+                return OPTIONS.detectItem[datum];
+            });
+        } else {
+            // general situation - use v1 censor
+            return data.details.map(datum => v1_map(datum)).join(' ');
+        }
     } else {
-        // general situation - use v1 censor
-        return data.details.map(datum => v1_map(datum)).join(' ');
+        let a = [];
+        if (data.scenes.politician.suggestion == 'block') a.push('敏感人物');
+        if (data.scenes.pulp.suggestion == 'block') a.push('涉黄');
+        if (data.scenes.terror.suggestion == 'block') a.push('暴恐');
+        return a.join(',');
     }
+    
 }
 
 function v1_map(datum) {

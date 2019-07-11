@@ -74,7 +74,7 @@ router.get('/home/jobstatistic', function(req, res, next) {
 //	trigger audit process
 router.get('/trigger', function(req, res, next) {
 	dh_img.auditStart();
-	// dh_video.auditStart();
+	dh_video.auditStart();
 	res.send({
 		code: 200,
 		msg: 'audit task triggered'
@@ -83,7 +83,7 @@ router.get('/trigger', function(req, res, next) {
 
 router.get('/stopper', function(req, res, next) {
 	dh_img.auditStop();
-	// dh_video.auditStop();
+	dh_video.auditStop();
 	res.send({
 		code: 200,
 		msg: 'audit task stopped'
