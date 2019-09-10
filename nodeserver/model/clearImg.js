@@ -1,5 +1,5 @@
-const fs		= require('fs');
-const DBConn  = require('./DBConnection');
+const fs	 = require('fs');
+const DBConn = require('./DBConnection');
 
 const filedir = '../public/files';
 let count = 0;

@@ -10,7 +10,7 @@ let isScroll = true;    //  控制下拉加载
 
 let SETTINGS = localStorage.settings ? JSON.parse(localStorage.settings) : {size:30,defaultClass:'normal',font:3,classoption:[],detectoption:[],filetype:'image'};
 SETTINGS.filetype = (typeof(SETTINGS.filetype) != 'undefined') ? SETTINGS.filetype : 'image';
-SETTINGS.detectoption.map(item => DETECTOPTION.add(item));
+SETTINGS.classoption.map(item => CLASSOPTION.add(item));
 
 window.onload = function() {
     setTimeout(init, 1);
@@ -35,14 +35,14 @@ function getFilterItem() {
         let sceneTemp = '';
         let objectTemp = '';
         for(let item in data.classItem) {
-            sceneTemp += `<div><label for="wa_list_scene_option_${item}"><input id="wa_list_scene_option_${item}" type="checkbox" data-option="${item}" onchange="sceneOptionChange(event)" />${data.classItem[item]}</label></div>`
+            sceneTemp += `<div><label for="wa_list_scene_option_${item}"><input id="wa_list_scene_option_${item}" type="checkbox" data-option="${item}" onchange="sceneOptionChange(event)" ${CLASSOPTION.has(item) ? "checked" : ""} />${data.classItem[item]}</label></div>`
         }
         for(let item in data.detectItem) {
             objectTemp += `<div><label for="wa_list_object_option_${item}"><input id="wa_list_object_option_${item}" type="checkbox" data-option="${item}" onchange="objectOptionChange(event)" ${DETECTOPTION.has(item) ? "checked" : ""} />${data.detectItem[item]}</label></div>`
         };
         ITEMS = Object.assign(data.classItem, data.detectItem);
         // document.querySelector('#wa_list_scene_option_container').innerHTML = sceneTemp;
-        document.querySelector('#wa_list_object_option_container').parentElement.innerHTML = '';
+        document.querySelector('#wa_list_object_option_container').innerHTML = sceneTemp;
     });
 }
 
@@ -79,7 +79,7 @@ function requestIllegalData() {
         startDate: startDate,
         endDate: endDate,
         // md5: md5,
-        classifyOption: [],
+        classifyOption: [...SETTINGS.classoption],
         detectOption: [],
         type: filetype,
         page: PAGENUM,
@@ -135,7 +135,7 @@ function fillListTable(ele, data, isAppend=false) {
                         <${(data[i].type=='image')?'img':'video'} src="${data[i].uri.replace('http://127.0.0.1:3333', FILEHOST)}" onclick="showContent(event)" controls="controls">
                     </td>
                     <td>${fileTypeMap(data[i].type)}</td>
-                    <td>${illegalMap(data[i].rets, data[i].type)}</td>
+                    <td>${illegalMap(data[i].rets.classes)}</td>
                     <td>${data[i].info.id}</td>
                     <td><button class="btn-danger" onclick="hideItem(event)" data-uid="${data[i].uid}">隐藏</button></td>
                 </tr>
@@ -221,7 +221,9 @@ function sceneOptionChange(event) {
         CLASSOPTION.add(event.target.dataset['option']);
     } else {
         CLASSOPTION.delete(event.target.dataset['option']);
-    }    
+    }
+    SETTINGS.classoption = [...CLASSOPTION];
+    localStorage.settings = JSON.stringify(SETTINGS);
 }
 
 function objectOptionChange(event) {
@@ -295,48 +297,10 @@ function fileIconDom(source) {
     return `<img class="fas-list-table-icon" src="/imgs/favicon/${filename}" />`;
 }
 
-function fileType(datum) {
-    let res = [];
-    if(datum.rets.scenes.pulp.suggestion != 'pass') res.push('涉黄');
-    if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
-    if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
-    return res.join(',');
-}
-
-function illegalMap(data, type) {
-    if(type == 'image') {
-        return data.details.map(datum => v1_map(datum)).join(' ');
-    } else {
-        let a = [];
-        if (data.scenes.politician.suggestion == 'block') a.push('敏感人物');
-        if (data.scenes.pulp.suggestion == 'block') a.push('涉黄');
-        if (data.scenes.terror.suggestion == 'block') a.push('暴恐');
-        return a.join(',');
-    }
-}
-
-function v1_map(datum) {
-    switch(datum.type) {
-        case 'pulp':
-            if(datum.label == 0) {
-                return '涉黄';
-            } else {
-                return '';
-            }
-        case 'terror':
-            if(datum.label == 1) {
-                return datum.class;
-            } else {
-                return '';
-            }
-        case 'politician':
-            if(datum.label == 1) {
-                return '敏感人物';
-            } else {
-                return '';
-            }
-
-    }
+function illegalMap(data) {
+    return data.map(datum => {
+        return OPTIONS.classItem[datum];
+    });
 }
 
 function showContent(event) {

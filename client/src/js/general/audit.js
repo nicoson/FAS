@@ -249,34 +249,19 @@ function fileTypeMap(type) {
     }
 }
 
-function illegalType(datum) {
-    let res = [];
-    if(typeof(datum.rets.scenes) == 'undefined') return [];
-    if(datum.rets.scenes.pulp.suggestion != 'pass') res.push('涉黄');
-    if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
-    if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
-    return res.join(',');
-}
+// function illegalType(datum) {
+//     let res = [];
+//     if(typeof(datum.rets.scenes) == 'undefined') return [];
+//     if(datum.rets.scenes.pulp.suggestion != 'pass') res.push('涉黄');
+//     if(datum.rets.scenes.terror.suggestion != 'pass') res.push('涉暴');
+//     if(datum.rets.scenes.politician.suggestion != 'pass') res.push('敏感人物');
+//     return res.join(',');
+// }
 
-function illegalMap(data, type) {
-    if(type == 'image') {
-        //  wa-sh
-        if(typeof(data.classes) != 'undefined'){
-            return data.classes.map(datum => {
-                return OPTIONS.detectItem[datum];
-            });
-        } else {
-            // general situation - use v1 censor
-            return data.details.map(datum => v1_map(datum)).join(' ');
-        }
-    } else {
-        let a = [];
-        if (data.scenes.politician.suggestion == 'block') a.push('敏感人物');
-        if (data.scenes.pulp.suggestion == 'block') a.push('涉黄');
-        if (data.scenes.terror.suggestion == 'block') a.push('暴恐');
-        return a.join(',');
-    }
-    
+function illegalMap(data) {
+    return data.classes.map(datum => {
+        return OPTIONS.classItem[datum];
+    });
 }
 
 function v1_map(datum) {

@@ -23,16 +23,17 @@ class storeHelper {
         let targetTable = 'taskpool';
         let timestamp = new Date();
         let filename = timestamp.getTime();
+        let folder = `${type}/${this.getDateString(timestamp)}`;
        
         //  step 1: save file
-        this.saveFile(file.data.uri, filename);
+        this.saveFile(file.data.uri, folder, filename);
 
         //  step 2: generate data bodylet timestamp = (new Date()).getTime();
         let data = {
             uid: filename,
             // name: file.meta.pic_name,
             type: type,
-            uri: `${config.FILESERVER}/${filename}`,
+            uri: `${config.FILESERVER}/${folder}/${filename}`,
             info: {
                 id: file.params.id
             },
@@ -47,16 +48,35 @@ class storeHelper {
         return res;
     }
 
-    saveFile(filedata, name) {
-        var base64Data = filedata.slice(filedata.indexOf(';base64,')+8);
-        var dataBuffer = new Buffer(base64Data, 'base64');
-        fs.writeFile(`${savepath}/${name}`, dataBuffer, function(err) {
+    saveFile(filedata, folder, name) {
+        let base64Data = null;
+        if(filedata.indexOf(';base64,') > -1) {
+            base64Data = filedata.slice(filedata.indexOf(';base64,')+8);
+        } else {
+            base64Data = filedata;
+        }
+        let dataBuffer = new Buffer(base64Data, 'base64');
+        let dirs = folder.split('/');
+        let dir = savepath;
+        dirs.map(d => {
+            dir += `/${d}`;
+            if(!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
+        });
+        fs.writeFile(`${savepath}/${folder}/${name}`, dataBuffer, function(err) {
             if(err){
                 sconsole.log("XXXXXXXXXXXXXXXXXXXXX  save file error ...");
+                sconsole.log(err);
             }else{
                 sconsole.log("=====================  save file success ...");
             }
         });
+    }
+
+    getDateString(day) {
+        day = new Date(day);
+        return `${day.getFullYear()}${(100+day.getMonth()+1).toString().slice(1)}${(100+day.getDate()).toString().slice(1)}`;
     }
 }
 

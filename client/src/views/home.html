@@ -20,39 +20,60 @@
     </header>
     
     <section>
-        <div>
+        <div id="wxb_home_statisticpanel">
             <table>
                 <tr>
-                    <td>当前请求总量：<span id="wxb_home_count">xxx</span></td>
-                    <td>近阶段无效数据量：<span id="wxb_home_badcall">xxx</span></td>
-                    <td>近阶段正常数据量：<span id="wxb_home_legal">xxx</span></td>
-                    <td>近阶段违规数据量：<span id="wxb_home_illegal">xxx</span></td>
+                    <td>图片请求总量：<span id="wxb_home_image_count">xxx</span></td>
+                    <td>近阶段无效图片：<span id="wxb_home_image_badcall">xxx</span></td>
+                    <td>近阶段正常图片：<span id="wxb_home_image_legal">xxx</span></td>
+                    <td>近阶段违规图片：<span id="wxb_home_image_illegal">xxx</span></td>
+                </tr>
+                <tr>
+                    <td>视频请求总量：<span id="wxb_home_video_count">xxx</span></td>
+                    <td>近阶段无效视频：<span id="wxb_home_video_badcall">xxx</span></td>
+                    <td>近阶段正常视频：<span id="wxb_home_video_legal">xxx</span></td>
+                    <td>近阶段违规视频：<span id="wxb_home_video_illegal">xxx</span></td>
                 </tr>
             </table>
+            <div id="wxb_home_controlbar">
+                <button id="wxb_home_starter" class='btn-success' onclick="startAudit()">开始过滤</button>
+                <button id="wxb_home_stopper" class='btn-danger' onclick="stopAudit()">停止过滤</button>
+            </div>
         </div>
-        <div>
-            <button id="wxb_home_starter" class='btn-success' onclick="startAudit()">开始过滤</button>
-            <button id="wxb_home_stopper" class='btn-danger' onclick="stopAudit()">停止过滤</button>
-        </div>
-        <div>
+        
+        <div id="wxb_home_chatpanel">
             <div id="wxb_home_leftpanel">
                 <div id="wxb_home_taskpool"></div>
+                <table id="wxb_home_table_left">
+                    <tr><th>待处理-视频</th><td></td></tr>
+                    <tr><th>待处理-图片</th><td></td></tr>
+                    <tr><th>待处理-总量</th><td></td></tr>
+                </table>
             </div>
             <div id="wxb_home_middlepanel">
-                <div id="wxb_home_taskinfo"></div>
+                <div id="wxb_home_imageinfo"></div>
+                <div>
+                    <input id="wxb_home_input_imgdropratio" type="number" placeholder="0.1" min=0 max=1 step=0.05 />
+                    <button class='btn-info' onclick="setDropRatio(event)">设置随机丢弃率</button>
+                </div>
+                <table id="wxb_home_table_middle">
+                    <tr><th>待审核图片</th><td></td></tr>
+                    <tr><th>人审违规图片</th><td></td></tr>
+                    <tr><th>机审违规总量</th><td></td></tr>
+                </table>
             </div>
-        </div>
-        <div>
-            <table id="wxb_home_table_left">
-                <tr><th>待处理-视频</th><td></td></tr>
-                <tr><th>待处理-图片</th><td></td></tr>
-                <tr><th>待处理-总量</th><td></td></tr>
-            </table>
-            <table id="wxb_home_table_right">
-                <tr><th>待审核图片</th><td></td></tr>
-                <tr><th>人审违规图片</th><td></td></tr>
-                <tr><th>机审违规总量</th><td></td></tr>
-            </table>
+            <div id="wxb_home_rightpanel">
+                <div id="wxb_home_videoinfo"></div>
+                <div>
+                    <input id="wxb_home_input_viddropratio" type="number" placeholder="0.1" min=0 max=1 step=0.05 />
+                    <button class='btn-info' onclick="setDropRatio(event)">设置随机丢弃率</button>
+                </div>
+                <table id="wxb_home_table_right">
+                    <tr><th>待审核视频</th><td></td></tr>
+                    <tr><th>人审违规视频</th><td></td></tr>
+                    <tr><th>机审违规总量</th><td></td></tr>
+                </table>
+            </div>
         </div>
     </section>
 

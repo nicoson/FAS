@@ -8,7 +8,7 @@ class InferenceHelper {
     constructor(isMock = false) {
         this.options = {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'}
+            headers: {'Content-Type': 'application/json', 'Connection': 'keep-alive'}
         };
         this.isMock = isMock;
     }

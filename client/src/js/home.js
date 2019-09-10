@@ -5,6 +5,7 @@ let IND = null;
 window.onload = function() {
     getList();
     getStatistics();
+    getDropRatio();
     setInterval(getStatistics, 3000);
 }
 
@@ -13,17 +14,22 @@ function getList() {
         if(res.code == 200) {
             let data = res.data;
             // fillStatic(data);
-            let taskpooldata = [data.taskpoolnum, data.taskpoolimagenum, data.taskpoolvideonum];
-            let fileinfodata = [data.fileinfoimagenum, data.illegalimage, data.waitimage];
-            drawCharts(taskpooldata,fileinfodata);
-            document.querySelector('#wxb_home_count').innerHTML = res.count;
+            let taskpooldata = [data.taskpoolNum, data.taskpoolImageNum, data.taskpoolVideoNum];
+            let imageData = [data.allIllegalImageNum, data.auditIllegalImageNum, data.rawIllegalImageNum];
+            let videoData = [data.allIllegalVideoNum, data.auditIllegalVideoNum, data.rawIllegalVideoNum];
+            drawCharts(taskpooldata,imageData,videoData);
+            document.querySelector('#wxb_home_image_count').innerHTML = res.count.IMGCOUNT;
+            document.querySelector('#wxb_home_video_count').innerHTML = res.count.VIDCOUNT;
 
-            document.querySelector('#wxb_home_table_left tr:nth-of-type(1) td').innerHTML = data.taskpoolvideonum;
-            document.querySelector('#wxb_home_table_left tr:nth-of-type(2) td').innerHTML = data.taskpoolimagenum;
-            document.querySelector('#wxb_home_table_left tr:nth-of-type(3) td').innerHTML = data.taskpoolnum;
-            document.querySelector('#wxb_home_table_right tr:nth-of-type(1) td').innerHTML = data.waitimage;
-            document.querySelector('#wxb_home_table_right tr:nth-of-type(2) td').innerHTML = data.illegalimage;
-            document.querySelector('#wxb_home_table_right tr:nth-of-type(3) td').innerHTML = data.fileinfoimagenum;
+            document.querySelector('#wxb_home_table_left tr:nth-of-type(1) td').innerHTML = data.taskpoolVideoNum;
+            document.querySelector('#wxb_home_table_left tr:nth-of-type(2) td').innerHTML = data.taskpoolImageNum;
+            document.querySelector('#wxb_home_table_left tr:nth-of-type(3) td').innerHTML = data.taskpoolNum;
+            document.querySelector('#wxb_home_table_middle tr:nth-of-type(1) td').innerHTML = data.rawIllegalImageNum;
+            document.querySelector('#wxb_home_table_middle tr:nth-of-type(2) td').innerHTML = data.auditIllegalImageNum;
+            document.querySelector('#wxb_home_table_middle tr:nth-of-type(3) td').innerHTML = data.allIllegalImageNum;
+            document.querySelector('#wxb_home_table_right tr:nth-of-type(1) td').innerHTML = data.rawIllegalVideoNum;
+            document.querySelector('#wxb_home_table_right tr:nth-of-type(2) td').innerHTML = data.auditIllegalVideoNum;
+            document.querySelector('#wxb_home_table_right tr:nth-of-type(3) td').innerHTML = data.allIllegalVideoNum;
         }
     });
 }
@@ -42,18 +48,46 @@ function stopAudit() {
     });
 }
 
-function getStatistics() {
-    fetch(APIHOST + '/home/jobstatistic').then(e => e.json()).then(e => {
-        document.querySelector('#wxb_home_count').innerHTML = e.data.total;
-        document.querySelector('#wxb_home_badcall').innerHTML = e.data.img.badcall + e.data.video.badcall;
-        document.querySelector('#wxb_home_legal').innerHTML = e.data.img.legal + e.data.video.legal;
-        document.querySelector('#wxb_home_illegal').innerHTML = e.data.img.illegal + e.data.video.illegal;
+function getDropRatio() {
+    fetch(APIHOST + '/home/getratio').then(e => e.json()).then(data => {
+        document.querySelector('#wxb_home_input_imgdropratio').value = data.imgdropratio;
+        document.querySelector('#wxb_home_input_viddropratio').value = data.viddropratio;
     });
 }
 
-function drawCharts(taskpooldata,fileinfodata) {
-    let taskpoolchart = drawBar('wxb_home_taskpool','TaskPool',['待处理','待处理-图片','待处理-视频'],taskpooldata);
-    let fileinfochart = drawBar('wxb_home_taskinfo','Illegal',['机审违规总量', '人审违规图片', '待审图片'],fileinfodata);
+function setDropRatio(event) {
+    console.info('setting drop ratio: ', new Date().getTime());
+    let imgdropratio = parseFloat(document.querySelector('#wxb_home_input_imgdropratio').value).toFixed(2);
+    let viddropratio = parseFloat(document.querySelector('#wxb_home_input_viddropratio').value).toFixed(2);
+    imgdropratio = (imgdropratio > 1) ? 1 : ((imgdropratio < 0) ? 0 : imgdropratio);
+    viddropratio = (viddropratio > 1) ? 1 : ((viddropratio < 0) ? 0 : viddropratio);
+
+    postBody.body = JSON.stringify({
+        imgdropratio: imgdropratio,
+        viddropratio: viddropratio
+    });
+    fetch(APIHOST + '/home/setratio', postBody).then(e => {
+        alert('随机丢弃率设置成功');
+    });
+}
+
+function getStatistics() {
+    fetch(APIHOST + '/home/jobstatistic').then(e => e.json()).then(e => {
+        document.querySelector('#wxb_home_image_count').innerHTML = e.data.total.IMGCOUNT;
+        document.querySelector('#wxb_home_image_badcall').innerHTML = e.data.img.badcall;
+        document.querySelector('#wxb_home_image_legal').innerHTML = e.data.img.legal;
+        document.querySelector('#wxb_home_image_illegal').innerHTML = e.data.img.illegal;
+        document.querySelector('#wxb_home_video_count').innerHTML = e.data.total.VIDCOUNT;
+        document.querySelector('#wxb_home_video_badcall').innerHTML = e.data.video.badcall;
+        document.querySelector('#wxb_home_video_legal').innerHTML = e.data.video.legal;
+        document.querySelector('#wxb_home_video_illegal').innerHTML = e.data.video.illegal;
+    });
+}
+
+function drawCharts(taskpooldata,imageData,videoData) {
+    let taskpoolchart = drawBar('wxb_home_taskpool','计算任务列表',['待处理','待处理-图片','待处理-视频'],taskpooldata);
+    let imageChart = drawBar('wxb_home_imageinfo','图片',['机审违规总量', '人审违规图片', '待审图片'],imageData);
+    let videoChart = drawBar('wxb_home_videoinfo','视频',['机审违规总量', '人审违规图片', '待审图片'],videoData);
 }
 
 function drawBar(ele,title,label,data) {

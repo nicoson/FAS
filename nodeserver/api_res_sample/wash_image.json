@@ -1,0 +1,17 @@
+{
+    "code":0,
+    "message":"",
+    "result":{
+        "label":1,
+        "score":0.99435645,
+        "classes":[
+            "bomb_vehicle"
+        ],
+        "classify":[
+            {
+                "class":"bomb_vehicle",
+                "score":0.99435645
+            }
+        ]
+    }
+}

@@ -141,16 +141,16 @@ class appHelper {
                 ];
                 Promise.all(p).then(res => {
                     resolve({
-                        taskpoolnum: res[0],
-                        taskpoolimagenum: res[1],
-                        taskpoolvideonum: res[2],
-                        fileinfonum: res[3],
-                        fileinfoimagenum: res[4],
-                        fileinfovideonum: res[5],
-                        illegalimage: res[6],
-                        illegalvideo: res[7],
-                        waitimage: res[8],
-                        waitvideo: res[9]
+                        taskpoolNum: res[0],
+                        taskpoolImageNum: res[1],
+                        taskpoolVideoNum: res[2],
+                        allIllegalNum: res[3],
+                        allIllegalImageNum: res[4],
+                        allIllegalVideoNum: res[5],
+                        auditIllegalImageNum: res[6],
+                        auditIllegalVideoNum: res[7],
+                        rawIllegalImageNum: res[8],
+                        rawIllegalVideoNum: res[9]
                     });
                 }).catch(err => reject(err));
             });
@@ -163,7 +163,7 @@ class appHelper {
     async getStatistic(key) {
         let res = await DBConn.queryData('statistic', {name: key}, 1, 0);
         // sconsole.log("res: ", res);
-        return res.length == 0 ? 0 : res[0].number;
+        return res.length == 0 ? {imgCount:0, vidCount:0} : res[0];
     }
 
     updateStatistic(key, data) {
@@ -171,7 +171,8 @@ class appHelper {
             updateOne: {
                 filter: {name: key},
                 update: {$set: {
-                    number: data,
+                    imgCount: data.imgCount,
+                    vidCount: data.vidCount,
                     update: new Date()
                 }},
                 upsert: true

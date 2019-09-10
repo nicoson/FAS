@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "export PORT=3333; node ./bin/www",
-    "dev": "export PORT=3000; node ./bin/www",
-    "dev-gen": "export PORT=3000; cp ./model/config_general.js ./model/config.js; node ./bin/www",
-    "dev-wash": "export PORT=3000; cp ./model/config_wash.js ./model/config.js; node ./bin/www"
+    "start": "source ./env/wash_prd.sh; node ./bin/www",
+    "dev": "source ./env/wash_dev.sh; node ./bin/www",
+    "dev-gen": "source ./env/general_dev.sh; node ./bin/www",
+    "dev-wash": "source ./env/wash_dev.sh; node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.18.2",

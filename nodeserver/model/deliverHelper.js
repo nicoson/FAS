@@ -13,7 +13,7 @@ let iHelp = new InferenceHelper(false);
 
 class fileHandler {
     constructor(type) {
-        this.judgeIllegal = (type == 'image') ? this.judgeIllegalImage : this.judgeIllegalVideo;
+        this.judgeIllegal = (type == 'image') ? config.judgeIllegalImage : config.judgeIllegalVideo;
     }
 
     // get tasks in queue
@@ -91,7 +91,7 @@ class fileHandler {
         try{
             for(let i in rawdata) {
                 if(!this.judgeIllegal(resdata[i])) {
-                    await fs.unlinkSync(`${savepath}/${rawdata[i].uid}`);
+                    await fs.unlinkSync(`${savepath}/${rawdata[i].uri.split('/').slice(4).join('/')}`);
                 }
             }
         }
@@ -166,17 +166,6 @@ class fileHandler {
             });
         });
     }
-
-    judgeIllegalImage(datum) {
-        // illegal: true;  normal: false
-        // sconsole.log('XXXXX test XXXX:  ', Object.keys(datum).length, datum.label, datum)
-        return (datum != null && Object.keys(datum).length > 0 && datum.label == 1);
-    }
-
-    judgeIllegalVideo(datum) {
-        // illegal: true;  normal: false
-        return (datum.suggestion == 'block');
-    }
 }
 
 // let fh = new fileHandler();
@@ -216,6 +205,9 @@ class job {
     async callImageJob(callBack) {
         let datum = await this.getDatum();
         if(datum == null) return callBack(null);
+        let options = config.IMAGE_OPTIONS;
+        options.data.uri = datum.uri;
+        
         let reqBody = JSON.stringify({
             "data": {
                 "uri": datum.uri
@@ -224,57 +216,33 @@ class job {
         });
         let res = await iHelp.censorCall(config.CENSORIMGAPI, reqBody).catch(err => sconsole.log('image inference err: ', err));
         // sconsole.log('res: ', res);
-        if(res.code == 0) {
-            callBack({
-                source: datum,
-                res: res.result
-            });
-        } else {
-            callBack({
-                source: datum,
-                res: null
-            });
-        }
+
+        callBack({
+            source: datum,
+            res: config.imageResFormat(res)
+        });
     }
 
     async callVideoJob(callBack) {
         let datum = await this.getDatum();
         if(datum == null) return callBack(null);
-        let reqBody = JSON.stringify({
-            "data": {
-                "uri": datum.uri
-            },
-            "params": {
-                "scenes": [
-                    "pulp",
-                    "terror",
-                    "politician"
-                ],
-                "cut_param": {
-                    "interval_msecs": 5000
-                }
-            }
-        });
+        let options = config.VIDEO_OPTIONS;
+        options.data.uri = datum.uri;
+        let reqBody = JSON.stringify(options);
         let res = await iHelp.censorCall(config.CENSORVIDEOAPI, reqBody).catch(err => sconsole.log('video inference err: ', err));
         sconsole.log('|** callVideoJob **| res: ', res);
-        if(res.code == 200) {
-            callBack({
-                source: datum,
-                res: res.result
-            });
-        } else {
-            callBack({
-                source: datum,
-                res: null
-            });
-        }
+
+        callBack({
+            source: datum,
+            res: config.videoResFormat(res)
+        });
     }
 
     //  独立运行解耦模块，单线程专门获取待处理数据集，只能由一个任务触发管理
     async feedDataQueue() {
         //  如果前一次轮询还未结束，那么跳过这次轮询
-        sconsole.log('-------------  trigger feed data: ', this.jobData.length, this.preload);
-        if(this.jobData.length < (this.preload/2) && !this.fetching) {
+        console.log('-------------  trigger feed data: ', this.jobData.length, this.preload);
+        if(this.jobData.length < (this.preload*3) && !this.fetching) {
             this.fetching = true;
             let data = (await this.fh.queryTasks(this.preload, this.type)).data;
             // sconsole.log('------   fetch data: ', data);
@@ -291,7 +259,7 @@ class job {
 
     //  独立运行解耦模块，单线程专门处理结果数据集，只能由一个任务触发管理
     async consume(data) {
-        sconsole.log('---------------    trigger consume function: current data length', data.length);
+        console.log('---------------    trigger consume function: current data length', data.length);
         if(data.length > 0) {
             sconsole.log('---------------    current output data: ', data);
             let temp = data.splice(0);

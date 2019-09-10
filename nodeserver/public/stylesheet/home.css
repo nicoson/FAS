@@ -6,13 +6,7 @@ section > div {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  margin: 3rem 0;
-}
-section > div:first-child {
-  justify-content: center;
-}
-section > div:first-child button {
-  margin: 2rem;
+  margin: 2rem 0;
 }
 section > div table {
   border-collapse: collapse;
@@ -22,24 +16,52 @@ section > div table th {
   border: 1px solid white;
   padding: .5rem 1rem;
 }
-#wxb_home_leftpanel {
+section #wxb_home_statisticpanel {
+  justify-content: center;
+}
+section #wxb_home_statisticpanel div {
+  display: flex;
+  flex-direction: column;
+}
+section #wxb_home_statisticpanel div button {
+  margin: .5rem 2rem;
+}
+#wxb_home_chatpanel #wxb_home_leftpanel {
   width: 30vw;
 }
-#wxb_home_leftpanel #wxb_home_taskpool {
+#wxb_home_chatpanel #wxb_home_leftpanel #wxb_home_taskpool {
   width: 30vw;
   height: 30vw;
 }
-#wxb_home_middlepanel {
+#wxb_home_chatpanel #wxb_home_middlepanel {
   width: 30vw;
 }
-#wxb_home_middlepanel #wxb_home_taskinfo {
+#wxb_home_chatpanel #wxb_home_middlepanel #wxb_home_imageinfo {
   width: 30vw;
   height: 30vw;
 }
-#wxb_home_rightpanel {
+#wxb_home_chatpanel #wxb_home_middlepanel div {
+  text-align: right;
+}
+#wxb_home_chatpanel #wxb_home_rightpanel {
   width: 30vw;
 }
-#wxb_home_rightpanel #wxb_home_taskmeta {
+#wxb_home_chatpanel #wxb_home_rightpanel #wxb_home_videoinfo {
   width: 30vw;
   height: 30vw;
+}
+#wxb_home_chatpanel #wxb_home_rightpanel div {
+  text-align: right;
+}
+#wxb_home_chatpanel table {
+  margin: 2rem auto;
+}
+#wxb_home_chatpanel table th {
+  width: 10rem;
+}
+#wxb_home_chatpanel input {
+  padding: .5rem;
+  margin: 0 1rem;
+  border-radius: 5px;
+  border: 1px solid #aaa;
 }
