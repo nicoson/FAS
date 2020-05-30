@@ -4,6 +4,9 @@ switch(process.env.SCENE) {
     case 'WASH':
         config = require('./config/config_wash');
         break;
+    case 'WASH_EXT':
+        config = require('./config/config_wash_extend');
+        break;
     case 'GENERAL':
         config = require('./config/config_general');
         break;

@@ -42,4 +42,6 @@ Field Analysis System 现场分析系统
     ```
 
 4. 启动镜像服务
-    docker run -d --network=host --restart=always -p 3333:3333 -v $(pwd)/server:/workspace/server fas
+    ```
+    > docker run -d --network=host --restart=always --name=fas -p 3333:3333 -v $(pwd)/nodeserver:/workspace/server fas
+    ```

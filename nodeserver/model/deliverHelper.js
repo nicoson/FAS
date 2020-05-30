@@ -208,14 +208,14 @@ class job {
         let options = config.IMAGE_OPTIONS;
         options.data.uri = datum.uri;
         
-        let reqBody = JSON.stringify({
-            "data": {
-                "uri": datum.uri
-            },
-            "params": config.CENSOR_PARAM
-        });
-        let res = await iHelp.censorCall(config.CENSORIMGAPI, reqBody).catch(err => sconsole.log('image inference err: ', err));
-        // sconsole.log('res: ', res);
+        // let reqBody = JSON.stringify({
+        //     "data": {
+        //         "uri": datum.uri
+        //     },
+        //     "params": config.CENSOR_PARAM
+        // });
+        let res = await iHelp.censorCall(config.CENSORIMGAPI, JSON.stringify(options)).catch(err => sconsole.log('image inference err: ', err));
+        // sconsole.log("************>>>>>>>> res: ", res);
 
         callBack({
             source: datum,

@@ -1,12 +1,13 @@
 {
-  "name": "nodeserver",
-  "version": "1.0.0",
+  "name": "fas-backend",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "start": "source ./env/wash_prd.sh; node ./bin/www",
     "dev": "source ./env/wash_dev.sh; node ./bin/www",
     "dev-gen": "source ./env/general_dev.sh; node ./bin/www",
-    "dev-wash": "source ./env/wash_dev.sh; node ./bin/www"
+    "dev-wash": "source ./env/wash_dev.sh; node ./bin/www",
+    "dev-wash-ext": "source ./env/wash_ext_dev.sh; node ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.18.2",

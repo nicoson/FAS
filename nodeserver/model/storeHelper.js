@@ -2,7 +2,7 @@ const fs		= require('fs');
 const config    = require('./config');
 const savepath  = config.UPLOAD_PATH;
 const sconsole  = require('./sconsole');
-const DBConn  = require('./DBConnection');
+const DBConn    = require('./DBConnection');
 // const DBConn  = require('./DBConnection_bk');
 
 // use UTC time zone
@@ -22,7 +22,7 @@ class storeHelper {
         sconsole.log('|** storeHelper.storeProcess **| INFO: store file into disc and push to <TaskPool> queue table | ', new Date());
         let targetTable = 'taskpool';
         let timestamp = new Date();
-        let filename = timestamp.getTime();
+        let filename = timestamp.getTime()*100000 + Math.round(Math.random()*10000);
         let folder = `${type}/${this.getDateString(timestamp)}`;
        
         //  step 1: save file

@@ -1,6 +1,7 @@
 const express	= require('express');
 const router	= express.Router();
 const log4js	= require('log4js');
+const fetch     = require('node-fetch');
 const config	= require('../model/config');
 const storeHelper	= require('../model/storeHelper');
 const deliverHelper = require('../model/deliverHelper');
@@ -202,6 +203,15 @@ router.post('/getfilemeta', function(req, res, next) {
 //	only accept base64 file
 router.post('/v1/pic', function(req, res, next) {
 	// console.log(req.body);
+
+	// // for wa_sh
+	// let options = {
+	// 	method: 'POST',
+	// 	headers: {'Content-Type': 'application/json', 'Connection': 'keep-alive'},
+	// 	body: JSON.stringify(req.body)
+	// }
+	// fetch('http://15.15.61.51:3333/v1/pic', options).then(e=>console.log(e));
+
 	if(Math.random() < (1 - IMGDROPRATIO)){
 		IMGCOUNT++;
 		sh.storeProcess(req.body, 'image');

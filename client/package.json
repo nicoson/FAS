@@ -1,17 +1,19 @@
 {
-  "name": "template",
-  "version": "1.0.0",
-  "description": "a info platform for WangAn",
+  "name": "fas-frontend",
+  "version": "2.0.0",
+  "description": "an info platform for WangAn",
   "main": "index.html",
   "scripts": {
     "build": "gulp --env dev --pkg wash",
     "build-wash": "gulp --env dev --pkg wash",
+    "build-wash-ext": "gulp --env dev --pkg wash-ext",
     "build-gen": "gulp --env dev --pkg general",
     "test": "gulp test --env test",
     "prod": "gulp --env prod",
     "dev": "gulp browserSync --env dev --pkg wash",
     "dev-gen": "gulp browserSync --env dev --pkg general",
-    "dev-wash": "gulp browserSync --env dev --pkg wash"
+    "dev-wash": "gulp browserSync --env dev --pkg wash",
+    "dev-wash-ext": "gulp browserSync --env dev --pkg wash-ext"
   },
   "devDependencies": {
     "bower": ">=1.8.0",

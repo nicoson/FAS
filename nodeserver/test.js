@@ -12,9 +12,17 @@ let videoDataNormal = fs.readFileSync(filePath);
 videoDataNormal = new Buffer(videoDataNormal).toString('base64');
 
 
-filePath = path.resolve('./public/files/terror.jpeg');
-let imgData = fs.readFileSync(filePath);
-imgData = new Buffer(imgData).toString('base64');
+filePath = path.resolve('./public/files/guns.jpg');
+let imgDataTerror = fs.readFileSync(filePath);
+imgDataTerror = new Buffer(imgDataTerror).toString('base64');
+
+filePath = path.resolve('./public/files/politician.jpg');
+let imgDataPolitician = fs.readFileSync(filePath);
+imgDataPolitician = new Buffer(imgDataPolitician).toString('base64');
+
+filePath = path.resolve('./public/files/pulp.jpeg');
+let imgDataPulp = fs.readFileSync(filePath);
+imgDataPulp = new Buffer(imgDataPulp).toString('base64');
 
 filePath = path.resolve('./public/files/normal.jpeg');
 let imgDataNormal = fs.readFileSync(filePath);
@@ -32,10 +40,22 @@ let videoNormalOptions = {
     body: JSON.stringify({data: {uri: videoDataNormal}, params: {id: 123}})
 }
 
-let imgOptions = {
+let imgOptionsPulp = {
     method: 'POST',
     headers: {'Content-Type': 'application/json', 'Connection': 'keep-alive'},
-    body: JSON.stringify({data: {uri: imgData}, params: {id: 321}})
+    body: JSON.stringify({data: {uri: imgDataPulp}, params: {id: 321}})
+}
+
+let imgOptionsTerror = {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Connection': 'keep-alive'},
+    body: JSON.stringify({data: {uri: imgDataTerror}, params: {id: 321}})
+}
+
+let imgOptionsPolitician = {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json', 'Connection': 'keep-alive'},
+    body: JSON.stringify({data: {uri: imgDataPolitician}, params: {id: 231}})
 }
 
 let imgNormalOptions = {
@@ -46,8 +66,10 @@ let imgNormalOptions = {
 
 
 for(let i=0; i<10; i++) {
-    fetch('http://localhost:3000/v1/video', videoOptions).then(e => console.log('video job posted ...'));
-    fetch('http://localhost:3000/v1/video', videoNormalOptions).then(e => console.log('video job posted ...'));
-    fetch('http://localhost:3000/v1/pic', imgOptions).then(e => console.log('image job posted ...'));
+    // fetch('http://localhost:3000/v1/video', videoOptions).then(e => console.log('video job posted ...'));
+    // fetch('http://localhost:3000/v1/video', videoNormalOptions).then(e => console.log('video job posted ...'));
+    fetch('http://localhost:3000/v1/pic', imgOptionsPulp).then(e => console.log('image job posted ...'));
+    fetch('http://localhost:3000/v1/pic', imgOptionsTerror).then(e => console.log('image job posted ...'));
+    fetch('http://localhost:3000/v1/pic', imgOptionsPolitician).then(e => console.log('image job posted ...'));
     fetch('http://localhost:3000/v1/pic', imgNormalOptions).then(e => console.log('image job posted ...'));
 }

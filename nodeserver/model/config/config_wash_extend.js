@@ -128,16 +128,13 @@ function v1_map(datum) {
             }
         case 'terror':
             if(datum.label == 1) {
-                return 'terror';
+                if(datum.class == 'guns') {    // filter only for guns
+                    return 'terror';
+                }
             } else {
                 return '';
             }
         case 'politician':
-            if(datum.label == 1) {
-                return 'politician';
-            } else {
-                return '';
-            }
-
+            return '';  // filter politician
     }
 }

@@ -1,5 +1,5 @@
-const sconsole      = require('./sconsole');
-const DBConn  = require('./DBConnection');
+const sconsole  = require('./sconsole');
+const DBConn    = require('./DBConnection');
 // const DBConn  = require('./DBConnection_bk');
 
 // use UTC time zone
