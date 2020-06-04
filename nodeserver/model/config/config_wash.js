@@ -12,12 +12,13 @@ switch(process.env.ENV) {
         break;
     case 'DEV':
         config = {
-            MONGODB:        "mongodb://100.100.142.29:27017",
+            MONGODB:        "mongodb://100.100.142.196:27017",
             DATABASE:       "fas",
-            CENSORIMGAPI:   "http://100.100.142.29:10000/v1/wangan-mix",
-            CENSORVIDEOAPI: "http://100.100.142.29:11000/v1/video/1",
+            CENSORIMGAPI:   "http://100.100.142.196:10000/v1/wangan-mix",
+            FILTERIMGAPI:   "http://100.100.142.196:23500/v1/pic",
+            CENSORVIDEOAPI: "http://100.100.142.196:11000/v1/video/1",
             UPLOAD_PATH:    "./public/files",
-            FILESERVER:     "http://100.100.141.209:3000/files",
+            FILESERVER:     "http://100.100.140.76:3000/files",
         };
         break;
 }
@@ -26,6 +27,7 @@ module.exports = {
     MONGODB:        config.MONGODB,
     DATABASE:       config.DATABASE,
     CENSORIMGAPI:   config.CENSORIMGAPI,
+    FILTERIMGAPI:   config.FILTERIMGAPI,
     CENSORVIDEOAPI: config.CENSORVIDEOAPI,
     UPLOAD_PATH:    config.UPLOAD_PATH,
     FILESERVER:     config.FILESERVER,

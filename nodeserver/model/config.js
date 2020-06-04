@@ -16,6 +16,7 @@ module.exports = {
     MONGODB:        config.MONGODB,
     DATABASE:       config.DATABASE,
     CENSORIMGAPI:   config.CENSORIMGAPI,
+    FILTERIMGAPI:   config.FILTERIMGAPI,
     CENSORVIDEOAPI: config.CENSORVIDEOAPI,
     UPLOAD_PATH:    config.UPLOAD_PATH,
     FILESERVER:     config.FILESERVER,

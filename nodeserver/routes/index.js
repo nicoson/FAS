@@ -5,10 +5,12 @@ const fetch     = require('node-fetch');
 const config	= require('../model/config');
 const storeHelper	= require('../model/storeHelper');
 const deliverHelper = require('../model/deliverHelper');
+const filterHelper = require('../model/filterHelper');
 const appHelper = require('../model/appHelper');
 let sh			= new storeHelper();
 let ah			= new appHelper();
 let dh_img		= new deliverHelper(50, 500, 'image');
+let fh_img		= new filterHelper(50, 2000, 'image');
 let dh_video	= new deliverHelper(5, 20, 'video');
 
 // const multer	= require('multer');
@@ -21,8 +23,8 @@ let VIDDROPRATIO	= 1; // set to be 1 to avoid error counting before count loaded
 ah.getStatistic('count').then(res => {
 	IMGCOUNT = res.imgCount;
 	VIDCOUNT = res.vidCount;
-	IMGDROPRATIO = 0.4;
-	VIDDROPRATIO = 0.4;
+	IMGDROPRATIO = 0;
+	VIDDROPRATIO = 0;
 	console.log("Count: ", res);
 });
 
@@ -83,6 +85,7 @@ router.get('/home/jobstatistic', function(req, res, next) {
 				VIDCOUNT: VIDCOUNT
 			},
 			img: dh_img.getStatistics(),
+			filter: fh_img.getStatistics(),
 			video: dh_video.getStatistics()
 		}
 	})
@@ -90,7 +93,8 @@ router.get('/home/jobstatistic', function(req, res, next) {
 
 //	trigger audit process
 router.get('/trigger', function(req, res, next) {
-	dh_img.auditStart();
+	fh_img.auditStart();
+	// dh_img.auditStart();
 	// dh_video.auditStart();
 	res.send({
 		code: 200,
@@ -99,7 +103,8 @@ router.get('/trigger', function(req, res, next) {
 });
 
 router.get('/stopper', function(req, res, next) {
-	dh_img.auditStop();
+	fh_img.auditStop();
+	// dh_img.auditStop();
 	// dh_video.auditStop();
 	res.send({
 		code: 200,
