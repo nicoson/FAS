@@ -17,12 +17,14 @@ let dh_video	= new deliverHelper(5, 20, 'video');
 // const upload	= multer({ dest: config.UPLOAD_PATH });
 
 let IMGCOUNT		= 0;
+let IMGREQUEST		= 0;
 let VIDCOUNT		= 0;
 let IMGDROPRATIO	= 1; // set to be 1 to avoid error counting before count loaded
 let VIDDROPRATIO	= 1; // set to be 1 to avoid error counting before count loaded
 ah.getStatistic('count').then(res => {
-	IMGCOUNT = res.imgCount;
-	VIDCOUNT = res.vidCount;
+	IMGCOUNT	 = res.imgCount;
+	IMGREQUEST	 = res.imgRequest;
+	VIDCOUNT	 = res.vidCount;
 	IMGDROPRATIO = 0;
 	VIDDROPRATIO = 0;
 	console.log("Count: ", res);
@@ -81,12 +83,13 @@ router.get('/home/jobstatistic', function(req, res, next) {
 		code: 200,
 		data: {
 			total: {
-				IMGCOUNT: IMGCOUNT,
-				VIDCOUNT: VIDCOUNT
+				IMGCOUNT	: IMGCOUNT,
+				IMGREQUEST	: IMGREQUEST,
+				VIDCOUNT	: VIDCOUNT
 			},
-			img: dh_img.getStatistics(),
-			filter: fh_img.getStatistics(),
-			video: dh_video.getStatistics()
+			img		: dh_img.getStatistics(),
+			filter	: fh_img.getStatistics(),
+			video	: dh_video.getStatistics()
 		}
 	})
 });
@@ -94,7 +97,7 @@ router.get('/home/jobstatistic', function(req, res, next) {
 //	trigger audit process
 router.get('/trigger', function(req, res, next) {
 	fh_img.auditStart();
-	// dh_img.auditStart();
+	dh_img.auditStart();
 	// dh_video.auditStart();
 	res.send({
 		code: 200,
@@ -104,7 +107,7 @@ router.get('/trigger', function(req, res, next) {
 
 router.get('/stopper', function(req, res, next) {
 	fh_img.auditStop();
-	// dh_img.auditStop();
+	dh_img.auditStop();
 	// dh_video.auditStop();
 	res.send({
 		code: 200,
@@ -217,12 +220,10 @@ router.post('/v1/pic', function(req, res, next) {
 	// }
 	// fetch('http://15.15.61.51:3333/v1/pic', options).then(e=>console.log(e));
 
+	IMGREQUEST++;
 	if(Math.random() < (1 - IMGDROPRATIO)){
 		IMGCOUNT++;
 		sh.storeProcess(req.body, 'image');
-		if(IMGCOUNT%100 == 0) {
-			ah.updateStatistic('count', {imgCount:IMGCOUNT, vidCount:VIDCOUNT});
-		}
 		res.send({
 			code: 200,
 			msg: 'task accepted'
@@ -242,9 +243,6 @@ router.post('/v1/video', function(req, res, next) {
 	if(Math.random() < (1 - VIDDROPRATIO)) {
 		sh.storeProcess(req.body, 'video');
 		VIDCOUNT++;
-		if(VIDCOUNT%5 == 0) {
-			ah.updateStatistic('count', {imgCount:IMGCOUNT, vidCount:VIDCOUNT});
-		}
 		res.send({
 			code: 200,
 			msg: 'task accepted'
@@ -256,6 +254,17 @@ router.post('/v1/video', function(req, res, next) {
 		});
 	}
 });
+
+setInterval(function() {
+	ah.updateStatistic('count', {
+		imgCount		: IMGCOUNT,
+		imgRequest		: IMGREQUEST,
+		vidCount		: VIDCOUNT,
+		imgDetail		: dh_img.getStatistics(),
+		imgFilterDetail	: fh_img.getStatistics(),
+		videoDetail		: dh_video.getStatistics()
+	});
+}, 5000);
 
 
 module.exports = router;

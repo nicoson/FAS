@@ -163,7 +163,7 @@ class appHelper {
     async getStatistic(key) {
         let res = await DBConn.queryData('statistic', {name: key}, 1, 0);
         // sconsole.log("res: ", res);
-        return res.length == 0 ? {imgCount:0, vidCount:0} : res[0];
+        return res.length == 0 ? {imgCount:0, imgRequest:0, vidCount:0} : res[0];
     }
 
     updateStatistic(key, data) {
@@ -171,9 +171,13 @@ class appHelper {
             updateOne: {
                 filter: {name: key},
                 update: {$set: {
-                    imgCount: data.imgCount,
-                    vidCount: data.vidCount,
-                    update: new Date()
+                    imgCount        : data.imgCount,
+                    imgRequest      : data.imgRequest,
+                    vidCount        : data.vidCount,
+                    imgDetail		: data.imgDetail,
+                    imgFilterDetail	: data.imgFilterDetail,
+                    videoDetail		: data.videoDetail,
+                    update          : new Date()
                 }},
                 upsert: true
             }

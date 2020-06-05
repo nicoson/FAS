@@ -65,7 +65,7 @@ let imgNormalOptions = {
 }
 
 
-for(let i=0; i<10; i++) {
+for(let i=0; i<100; i++) {
     // fetch('http://localhost:3000/v1/video', videoOptions).then(e => console.log('video job posted ...'));
     // fetch('http://localhost:3000/v1/video', videoNormalOptions).then(e => console.log('video job posted ...'));
     fetch('http://localhost:3000/v1/pic', imgOptionsPulp).then(e => console.log('image job posted ...'));

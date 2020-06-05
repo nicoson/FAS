@@ -1,0 +1,1 @@
+ab -n 10000 -c 40 -T "application/json" -p ab_object.json http://100.100.142.196:8764/v1/pic

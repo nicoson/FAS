@@ -20,7 +20,7 @@ class fileHandler {
     queryTasks(size, type='image') {
         sconsole.log('|** deliverHelper.queryTasks **| INFO: query tasks from taskpool', new Date());
         // let filter = {type: type, status:{$exists:false}};
-        let filter = {type: type, filter: false};
+        let filter = {type: type, filter: false, status: "unlock"};
         // sconsole.log('-------  query filter: ', filter);
         return new Promise(function(resolve, reject) {
             DBConn.queryData('taskpool', filter, size).then(data => {
@@ -337,6 +337,14 @@ class deliverHelper {
 
     getStatistics() {
         return this.job.staticstic;
+    }
+
+    setStatistics(data) {
+        this.job.staticstic = {
+            badcall : data.badcall,
+            legal   : data.legal,
+            illegal : data.illegal
+        }
     }
 }
 

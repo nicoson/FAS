@@ -76,6 +76,7 @@ class fileHandler {
                     filter: {_id: rawdata[i]._id},
                     update: {$set: {
                         filter: resData[i],
+                        status: "unlock",
                         update: timestamp
                     }}
                 }
@@ -179,7 +180,8 @@ class job {
         if(datum == null) return callBack(null);
         let options = config.IMAGE_OPTIONS;
         options.uri = datum.uri;
-        options.params = {"threshold": 0.6,"scenes": ["pulp","terror","politician","march","text"]}
+        // options.params = {"threshold": 0.2,"scenes": ["pulp","terror","politician","march","text"]};
+        options.params = {"threshold": 0.2,"scenes": ["terror","march","text"]};
         
         let res = await iHelp.censorCall(config.FILTERIMGAPI, JSON.stringify(options)).catch(err => sconsole.log('image inference err: ', err));
         sconsole.log(">>>>>>>> callImageJob inference result data: ", res);
@@ -304,6 +306,14 @@ class filterHelper {
 
     getStatistics() {
         return this.job.staticstic;
+    }
+
+    setStatistics(data) {
+        this.job.staticstic = {
+            filter_badcall : data.filter_badcall,
+            filter_legal   : data.filter_legal,
+            filter_illegal : data.filter_illegal
+        }
     }
 }
 
