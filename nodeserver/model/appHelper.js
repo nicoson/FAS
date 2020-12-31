@@ -186,6 +186,24 @@ class appHelper {
         return 'done';
     }
 
+    updateHistory(date, hour, data) {
+        let operations = [{
+            updateOne: {
+                filter: {date: date, hour: hour},
+                update: {$set: {
+                    date        : date,
+                    hour        : hour,
+                    requests    : data.imgRequest,
+                    handle      : data.imgCount,
+                    update      : new Date()
+                }},
+                upsert: true
+            }
+        }];
+        DBConn.updateData('history', operations);
+        return 'done';
+    }
+
     async sleep(period) {
         return new Promise(function(resolve, reject){
             setTimeout(function(){resolve(1)}, period);

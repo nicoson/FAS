@@ -19,8 +19,8 @@ class fileHandler {
     // get tasks in queue
     queryTasks(size, type='image') {
         sconsole.log('|** deliverHelper.queryTasks **| INFO: query tasks from taskpool', new Date());
-        // let filter = {type: type, status:{$exists:false}};
-        let filter = {type: type, filter: false, status: "unlock"};
+        // let filter = {type: type, status:{$exists:false}};   // for non-filter case
+        let filter = {type: type, filter: false, status: "unlock"}; // for filter case
         // sconsole.log('-------  query filter: ', filter);
         return new Promise(function(resolve, reject) {
             DBConn.queryData('taskpool', filter, size).then(data => {
@@ -175,6 +175,7 @@ class job {
         this.preload = preload;
         this.jobData = [];
         this.fetching = false;
+        this.fetchTimeout = null;
         this.type = type;
         this.callJob = (type == 'image') ? this.callImageJob : this.callVideoJob;
         this.staticstic = {badcall: 0, legal: 0, illegal: 0};
@@ -242,27 +243,59 @@ class job {
     //  独立运行解耦模块，单线程专门获取待处理数据集，只能由一个任务触发管理
     async feedDataQueue() {
         //  如果前一次轮询还未结束，那么跳过这次轮询
-        console.log('-------------  trigger feed data: ', this.jobData.length, this.preload);
-        if(this.jobData.length < (this.preload*3) && !this.fetching) {
-            this.fetching = true;
-            let data = (await this.fh.queryTasks(this.preload, this.type)).data;
-            // sconsole.log('------   fetch data: ', data);
-            if(data.length > 0) {
-                await this.fh.switchTaskStatus(data);
-                this.jobData.push(...data);
-                sconsole.log(`            ... fetch: ${this.jobData.length} jobs ...`);
+        sconsole.info('-------------->  deliverHelper.feedDataQueue trigger feed data: ', this.jobData.length, this.preload, this.fetching);
+        
+        // 防止超时不取的情况
+        if(this.fetching) {
+            if(this.fetchTimeout != null) {
+                if((Date.now() - this.fetchTimeout) > 600000) {
+                    this.fetching = false;
+                    sconsole.log(`------------  deliverHelper.feedDataQueue fetching data time out, `, new Date());
+                }
             } else {
-                // 等下一次轮询
+                this.fetching = false;
             }
-            this.fetching = false;
         }
+
+        if(this.jobData.length < (this.preload*3) && !this.fetching) {
+            try {
+                this.fetching = true;
+                this.fetchTimeout = Date.now();
+                let data = await this.fh.queryTasks(this.preload, this.type).catch(err => {
+                    sconsole.log('-------------->   deliverHelper.feedDataQueue error, pls check DBCon Error Info');
+                });
+
+                if(typeof(data) == 'undefined') {
+                    // do nothing
+                } else {
+                    sconsole.log('-------------->  deliverHelper.feedDataQueue fetch data: ', data);
+                    if(data.data.length > 0) {
+                        await this.fh.switchTaskStatus(data.data);
+                        this.jobData.push(...data.data);
+                        sconsole.log(`            ... fetch: ${this.jobData.length} jobs ...`);
+                    } else {
+                        // 等下一次轮询
+                        sconsole.info('-------------->  deliverHelper.feedDataQueue trigger feed data: no data fetched  ...');
+                    }
+                }
+            }
+            catch(err) {
+                sconsole.log('-------------->  deliverHelper.feedDataQueue error: ', err);
+            }
+            
+            this.fetching = false;
+            this.fetchTimeout = null;
+        }
+
+        sconsole.info(`-------------->  deliverHelper.feedDataQueue query finished ... ...`);
+        return 'done';
     }
 
     //  独立运行解耦模块，单线程专门处理结果数据集，只能由一个任务触发管理
     async consume(data) {
-        console.log('---------------    trigger consume function: current data length', data.length);
+        sconsole.log('-------------->--    deliverHelper trigger consume function: current data length', data.length);
         if(data.length > 0) {
-            sconsole.log('---------------    current output data: ', data);
+            sconsole.log('-------------->--    current output data: ', data);
             let temp = data.splice(0);
             let rawData = temp.map(datum => datum.source);
             let resData = temp.map(datum => datum.res);
@@ -324,7 +357,7 @@ class job {
 class deliverHelper {
     constructor(concurrency=10, preload=200, type='image') {
         this.job = new job(preload, type)
-        this.worker = new CONCURRENT(concurrency, this.job);
+        this.worker = new CONCURRENT(concurrency, this.job, 'deliverJob');
     }
 
     auditStart() {

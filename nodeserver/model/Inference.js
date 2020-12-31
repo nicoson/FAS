@@ -58,8 +58,8 @@ class InferenceHelper {
             //     });
             //     return;
             // }
-            sconsole.info('|** InferenceHelper.censorCall **| API addr: ', api);
-            sconsole.info('|** InferenceHelper.censorCall **| INFO: ', reqBody);
+            sconsole.log('|** InferenceHelper.censorCall **| API addr: ', api);
+            sconsole.log('|** InferenceHelper.censorCall **| INFO: ', reqBody);
             fetch(api, this.options).then(e => e.json()).then(data => {
                 if(data.error == undefined) {
                     resolve(data);

@@ -5,20 +5,21 @@ switch(process.env.ENV) {
             MONGODB:        "mongodb://127.0.0.1:27017",
             DATABASE:       "fas",
             CENSORIMGAPI:   "http://127.0.0.1:10000/v1/wangan-mix",
+            FILTERIMGAPI:   "http://15.15.15.72:35333/v1/pic",
             CENSORVIDEOAPI: "http://127.0.0.1:11000/v1/video/1",
             UPLOAD_PATH:    "./public/files",
-            FILESERVER:     `http://127.0.0.1:${process.env.PORT}/files`,
+            FILESERVER:     `http://15.15.15.72:${process.env.PORT}/files`,
         };
         break;
     case 'DEV':
         config = {
-            MONGODB:        "mongodb://100.100.142.196:27017",
+            MONGODB:        "mongodb://localhost:27017",
             DATABASE:       "fas",
-            CENSORIMGAPI:   "http://100.100.142.196:10000/v1/wangan-mix",
-            FILTERIMGAPI:   "http://100.100.142.196:23500/v1/pic",
-            CENSORVIDEOAPI: "http://100.100.142.196:11000/v1/video/1",
+            CENSORIMGAPI:   "http://localhost:10000/v1/wangan-mix",
+            FILTERIMGAPI:   "http://localhost:23500/v1/pic",
+            CENSORVIDEOAPI: "http://localhost:11000/v1/video/1",
             UPLOAD_PATH:    "./public/files",
-            FILESERVER:     "http://100.100.140.76:3000/files",
+            FILESERVER:     "http://100.100.140.18:3000/files",
         };
         break;
 }

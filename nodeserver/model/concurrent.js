@@ -2,7 +2,7 @@
 const sconsole = require('./sconsole');
 
 class Concurrent {
-    constructor(concurrency=10, core=null) {
+    constructor(concurrency=10, core=null, name='default') {
         this.concurrency        = concurrency;
         this.concurrentCount    = 0;
         this.index  = 0;
@@ -10,6 +10,7 @@ class Concurrent {
         this.output = [];
         this.core   = core;
         this.worker = null;
+        this.name   = name;
     }
 
     init() {
@@ -64,9 +65,23 @@ class Concurrent {
     }
 
     watchJob() {
+        let count = 0;
         return {
             consume: setInterval(() => this.core.consume(this.output), 5000),
-            fetch: setInterval(() => this.core.feedDataQueue(), 1000)
+            fetch: setInterval(() => {
+                sconsole.info(`...............  ${this.name}: watchJob trigger: `, count);
+                if(count < 5) {
+                    count++;
+                    this.core.feedDataQueue().then(res => {
+                        sconsole.log(`...............  ${this.name}: watchJob count: `, count);
+                        count--;
+                    }).catch(err => {
+                        console.log('concurrent watchJob error: ', err);
+                    });
+                } else {
+                    sconsole.log(`...............  ${this.name}: watchJob trigger pending ... ...`);
+                }
+            }, 3000)
         }
     }
 

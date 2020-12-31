@@ -1,0 +1,1 @@
+db.illegal.find({"manualreview":true,"update":{$gt:ISODate("2020-12-14T00:00:00")}}).count()

@@ -9,9 +9,12 @@ const filterHelper = require('../model/filterHelper');
 const appHelper = require('../model/appHelper');
 let sh			= new storeHelper();
 let ah			= new appHelper();
-let dh_img		= new deliverHelper(50, 500, 'image');
-let fh_img		= new filterHelper(50, 2000, 'image');
+let dh_img		= new deliverHelper(5, 500, 'image');	// 200, 1000
+let fh_img		= new filterHelper(5, 2000, 'image');	// 300, 2000
 let dh_video	= new deliverHelper(5, 20, 'video');
+
+fh_img.auditStart();
+dh_img.auditStart();
 
 // const multer	= require('multer');
 // const upload	= multer({ dest: config.UPLOAD_PATH });
@@ -25,9 +28,27 @@ ah.getStatistic('count').then(res => {
 	IMGCOUNT	 = res.imgCount;
 	IMGREQUEST	 = res.imgRequest;
 	VIDCOUNT	 = res.vidCount;
-	IMGDROPRATIO = 0;
-	VIDDROPRATIO = 0;
+	IMGDROPRATIO = 0.5;
+	VIDDROPRATIO = 0.5;
 	console.log("Count: ", res);
+
+	setInterval(function() {
+		ah.updateStatistic('count', {
+			imgCount		: IMGCOUNT,
+			imgRequest		: IMGREQUEST,
+			vidCount		: VIDCOUNT,
+			imgDetail		: dh_img.getStatistics(),
+			imgFilterDetail	: fh_img.getStatistics(),
+			videoDetail		: dh_video.getStatistics()
+		});
+	}, 5000);
+
+	setInterval(function() {
+		ah.updateHistory(new Date().toJSON().slice(0,10), new Date().toJSON().slice(11,13), {
+			imgCount		: IMGCOUNT,
+			imgRequest		: IMGREQUEST,
+		});
+	}, 10000);
 });
 
 log4js.configure({
@@ -87,9 +108,10 @@ router.get('/home/jobstatistic', function(req, res, next) {
 				IMGREQUEST	: IMGREQUEST,
 				VIDCOUNT	: VIDCOUNT
 			},
-			img		: dh_img.getStatistics(),
-			filter	: fh_img.getStatistics(),
-			video	: dh_video.getStatistics()
+			img			: dh_img.getStatistics(),
+			filter		: fh_img.getStatistics(),
+			video		: dh_video.getStatistics(),
+			dropRatio	: IMGDROPRATIO
 		}
 	})
 });
@@ -256,15 +278,14 @@ router.post('/v1/video', function(req, res, next) {
 });
 
 setInterval(function() {
-	ah.updateStatistic('count', {
-		imgCount		: IMGCOUNT,
-		imgRequest		: IMGREQUEST,
-		vidCount		: VIDCOUNT,
-		imgDetail		: dh_img.getStatistics(),
-		imgFilterDetail	: fh_img.getStatistics(),
-		videoDetail		: dh_video.getStatistics()
-	});
-}, 5000);
+	ah.getSystemStatus().then(data => {
+		if(data.taskpoolNum > 200000) {
+			IMGDROPRATIO = 1;
+		} else if(data.taskpoolNum < 50000) {
+			IMGDROPRATIO = 0;
+		}
+	}).catch(err => {res.send({code:500, err: err})});
+}, 30000);
 
 
 module.exports = router;

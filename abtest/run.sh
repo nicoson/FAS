@@ -1,1 +1,1 @@
-ab -n 10000 -c 40 -T "application/json" -p ab_object.json http://100.100.142.196:8764/v1/pic
+ab -n 100 -c 10 -T "application/json" -p ab_fas.json http://15.15.15.72:35333/v1/pic

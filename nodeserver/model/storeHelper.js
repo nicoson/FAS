@@ -15,6 +15,7 @@ class storeHelper {
         DBConn.createTable('taskpool', ['uid']).then(e => sconsole.log(e));
         DBConn.createTable('illegal', ['uid']).then(e => sconsole.log(e));
         DBConn.createTable('statistic').then(e => sconsole.log(e));
+        DBConn.createTable('history').then(e => sconsole.log(e));
     }
 
     // get tasks in queue

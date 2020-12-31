@@ -1,9 +1,9 @@
 // prod env
-// let APIHOST = '';
+let APIHOST = '';
 let FILEHOST = '';
 
 // test env
-let APIHOST = 'http://localhost:3000';
+// let APIHOST = 'http://localhost:3000';
 // let APIHOST = 'http://100.100.62.163:3333';
 // let FILEHOST = 'http://100.100.62.163:3333';
 

@@ -2,15 +2,21 @@
 function sconsole() {}
 
 sconsole.log = function(...args) {
-    let flag = true;
+    let flag = false;
     if(flag) {
         console.log(...args);
     }
 }
 
-sconsole.info = sconsole.log;
+sconsole.info = function(...args) {
+    console.log(...args);
+}
+
 sconsole.warn = sconsole.log;
-sconsole.error = sconsole.log;
+
+sconsole.error = function(...args) {
+    console.log(...args);
+}
 
 
 module.exports = sconsole;
