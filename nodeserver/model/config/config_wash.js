@@ -13,7 +13,7 @@ switch(process.env.ENV) {
         break;
     case 'DEV':
         config = {
-            MONGODB:        "mongodb://localhost:27017",
+            MONGODB:        "mongodb://100.100.142.71:27018",
             DATABASE:       "fas",
             CENSORIMGAPI:   "http://localhost:10000/v1/wangan-mix",
             FILTERIMGAPI:   "http://localhost:23500/v1/pic",

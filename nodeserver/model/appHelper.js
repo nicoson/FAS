@@ -58,8 +58,26 @@ class appHelper {
 
         sconsole.log(JSON.stringify(operations));
         let res = await DBConn.updateData(table, operations).catch(err => {sconsole.log(err); return err});
-        sconsole.log('db operation result: ', res)
+        this.removeFiles(data);
+
+        sconsole.log('db operation result: ', res);
         return res;
+    }
+
+    async removeFiles(data) {
+        sconsole.info('|** appHelper.removeFiles **| INFO: remove files from temp dir', new Date());
+        try{
+            for(let i=0; i<data.length; i++) {
+                if(data[i].manualreview == false) {
+                    await fs.unlinkSync(`${savepath}/${data[i].uri.split('/').slice(4).join('/')}`);
+                }
+            }
+        }
+        catch(err) {
+            sconsole.error('|** appHelper.removeFiles **| INFO: remove files err: ', err);
+        }
+        
+        return {code: 200};
     }
 
     async getRawData(req) {

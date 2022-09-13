@@ -1,3 +1,6 @@
+process.env.ENV = 'DEV';
+process.env.SCENE = 'WASH';
+
 var fs = require('fs'); // 引入fs模块
 const DBConn  = require('./DBConnection');
 

@@ -1,3 +1,6 @@
+process.env.ENV = 'DEV';
+process.env.SCENE = 'WASH';
+
 const fs	 = require('fs');
 const DBConn = require('./DBConnection');
 
